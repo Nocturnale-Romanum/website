@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body_class %}template-homepage{% endblock %}
+
+
+{% block content %}
+
+<div class="row">
+<div class="col-sm-10">
+
+{% if feast.day %}<h4>{{ feast.day }}</h4>{% endif %}
+<h2>{{ feast.title }}</h2>
+{% if feast.rank_54 %}<h4>{{ feast.rank_54 }}</h4>{% endif %}
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Genre</th>
+      <th scope="col">Incipit</th>
+      <th scope="col">CantusID</th>
+      <th scope="col">Status</th>
+      <th score="col">Related</th>
+    </tr>
+  </thead>
+  <tbody>
+{% for data in chants_and_duplicates %}
+    <tr>
+      <th scope="row">{{ data.chant.office_part }}</th>
+      <td><a href=/{{ chantURLprefix }}/{{ data.chant.code }}/>{{ data.chant.incipit }}</a></td>
+      <td>{{ data.chant.cantus_id }}</td>
+      <td>{{ data.chant.status }}</td>
+      <td>
+        {% if data.duplicates %}
+        {% for c in data.duplicates %}
+          <a href=/{{ chantURLprefix }}/{{ c.code }}/>{{ c.feast.title }}</a><br>  
+        {% endfor %}
+        {% endif %}
+      </td>
+    </tr>
+{% endfor %}
+  </tbody>
+</table>
+
+
+</div>
+</div>
+
+{% endblock content %}

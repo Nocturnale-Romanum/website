@@ -1,0 +1,11 @@
+venv/*
+search/*
+manage.py
+media/*
+*__pycache__*
+*__init__*
+*/migrations/*
+*wsgi.py
+nocturnale/settings/mysql.conf
+nocturnale/settings/dev.py
+nocturnale/settings/production.py

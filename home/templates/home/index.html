@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body_class %}template-homepage{% endblock %}
+
+
+{% block content %}
+
+<div class="row">
+<div class="col-sm-12">
+
+<a href=/{{ parentURL }}/>Return to Contents</a><br>
+
+<h2>Alphabetical index of chants</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Genre</th>
+      <th scope="col">Incipit</th>
+      <th scope="col">CantusID</th>
+      <th scope="col">Status</th>
+      <th score="col">Feast</th>
+    </tr>
+  </thead>
+  <tbody>
+{% for chant in chants %}
+    <tr>
+      <th scope="row">{{ chant.office_part }}</th>
+      <td><a href=/{{ chantURLprefix }}/{{ chant.code }}/>{{ chant.incipit }}</a></td>
+      <td>{{ chant.cantus_id }}</td>
+      <td>{{ chant.status }}</td>
+      <td>
+          <a href=/{{ feastURLprefix }}/{{ chant.feast.code }}/>{{ chant.feast.title }}</a>
+      </td>
+    </tr>
+{% endfor %}
+  </tbody>
+</table>
+
+
+</div>
+</div>
+
+{% endblock content %}

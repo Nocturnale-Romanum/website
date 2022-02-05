@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body_class %}template-homepage{% endblock %}
+
+
+{% block content %}
+
+<div class="row">
+<div class="col-sm-10">
+
+<h2>{{ chant.incipit }}</h2>
+<p>Feast : {{ chant.feast.title }}</p>
+<p>Office_part : {{ chant.office_part }}</p>
+<p>Cantus ID : 
+   {% if chant.cantus_id %}
+     <a href="http://cantusindex.org/id/{{ chant.cantus_id }}">{{ chant.cantus_id }}</a>
+   {% else %}
+     Unspecified
+   {% endif %}
+</p>
+<p>Status : {{ chant.status }}</p>
+
+<h4>Selected proposal :</h4>
+
+{% if selected %}
+
+{% else %}
+
+None
+
+{% endif %}
+
+<h4>Proposals :</h4>
+
+{% for p in unselected %}
+
+p.submitter
+
+{% endfor %}
+
+</div>
+</div>
+
+{% endblock content %}

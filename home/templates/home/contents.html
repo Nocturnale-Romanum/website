@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body_class %}template-homepage{% endblock %}
+
+
+{% block content %}
+
+<div class="row">
+<a href=/{{ indexURLprefix }}/>Alphabetical index of chants</a><br>
+<div class="col-sm-6">
+
+  <h2>Proprium de Tempore</h2>
+
+{% for feast in temporeFeasts %}
+
+    <a href=/{{ feastURLprefix }}/{{ feast.code }}/>{% if feast.day %}{{ feast.day }} : {% endif %}{{ feast.title }}</a><br>
+
+{% endfor %}
+
+</div>
+
+<div class="col-sm-6">
+
+  <h2>Ordinarium</h2>
+
+{% for feast in ordinaryFeasts %}
+
+    <a href=/{{ feastURLprefix }}/{{ feast.code }}/>{% if feast.day %}{{ feast.day }} : {% endif %}{{ feast.title }}</a><br>
+
+{% endfor %}
+
+  <h2>Proprium Sanctorum</h2>
+
+{% for feast in sanctisFeasts %}
+
+    <a href=/{{ feastURLprefix }}/{{ feast.code }}/>{% if feast.day %}{{ feast.day }} : {% endif %}{{ feast.title }}</a><br>
+
+{% endfor %}
+
+  <h2>Communia</h2>
+
+{% for feast in communiaFeasts %}
+
+    <a href=/{{ feastURLprefix }}/{{ feast.code }}/>{% if feast.day %}{{ feast.day }} : {% endif %}{{ feast.title }}</a><br>
+
+{% endfor %}
+
+</div>
+</div>
+
+{% endblock content %}
