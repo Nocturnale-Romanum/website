@@ -24,7 +24,7 @@ urlpatterns = [
     path('feast/<slug:fcode>/', home_views.feast),
     path('chant/<slug:hcode>/', home_views.chant),
     path('index/', home_views.index),
-    path('<slug:hcode>/edit_proposal/', home_views.edit_proposal),
+    path('edit_proposal/<slug:hcode>/', home_views.edit_proposal),
 
 ]
 

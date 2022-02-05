@@ -9,10 +9,12 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 
 
 class HomePage(Page):
-    """Somewhat generic page model"""
+    """Somewhat generic page model.
+    The parent Page class has a 'title' attribute and the associated content panel, plus metadata."""
     templates = "home/home_page.html"
-
+    # this is the contents of the page
     text = RichTextField(blank=True)
+    # this image has its content_panel in the admin, but is not yet used.
     image = models.ForeignKey(
         "wagtailimages.Image",
         null=True,
@@ -20,15 +22,20 @@ class HomePage(Page):
         on_delete=models.SET_NULL,
         related_name="+",
     )
+    # added fields should be added there as well in order to be editable in the admin.
     content_panels = Page.content_panels + [
         ImageChooserPanel("image"),
         FieldPanel("text"),
     ]
 
 class Proposal(models.Model):
+    """This class represents a bit of GABC code and associated metadata,
+    submitted by a user as restitution of a given chant."""
     chant = models.ForeignKey("Chant", related_name="proposals", null=False, on_delete=models.CASCADE)
     submitter = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="proposals", null=False, on_delete=models.PROTECT)
+    # this version field is not used at the time.
     version = models.CharField(max_length=100, blank=True)
+    # when a chant gets its first proposal, it should go from MISSING to POPULATED
     def create(self, **obj_data):
       obj_data['version'] = obj_data['version'].strip()
       if obj_data['version'] == "":
@@ -39,21 +46,28 @@ class Proposal(models.Model):
         c.save()
       super().create(**obj_data)
     def filename(self):
-      return self.chant.feast.code + self.chant.code + "_" + self.version + ".gabc"
+      return self.chant.code + "_" + self.submitter.username + ".gabc"
 
 class Chant(models.Model):
-    """Basic chant entry model"""
+    """This class represents a chant entry, that is, a specific sung part of a given day's Matins.
+    A number of proposals are associated with a given Chant entry, one of which may be 'selected' (for insertion in the GABC reference files)."""
     selected_proposal = models.ForeignKey("Proposal", null=True, on_delete=models.SET_NULL, related_name="chant_where_this_is_selected")
     feast = models.ForeignKey("Feast", null=False, on_delete=models.PROTECT, related_name="chants")
     code = models.CharField(max_length=20, null=False, default="ERROR", unique=True)
+    # never change this value. new chant entries within a feast should be attributed a unique feast_position according to their position.
     feast_position = models.IntegerField(null=False, default=0)
     incipit = models.CharField(max_length=100, null=False, blank=False, default="REMOVE_ME")
     cantus_id = models.CharField(max_length=20, null=True, blank=True)
+    # all chants should be of office-part an, ps, hy, re, or; according to Gregobase classification of genres.
     office_part = models.CharField(max_length=10, null=False, blank=False, default="ERROR")
+    # if a chant has related chants, e.g. duplicates, or chants that share a common refrain, or are mostly identical, then it will point
+    # to a related_chants_class which points back to all the "duplication family"
     related_chants_class = models.ForeignKey("RelatedChantsClass", null=True, on_delete=models.SET_NULL, related_name="chants")
     status = models.CharField(max_length=10, choices=[(x,x) for x in ["DEFINITIVE", "REVIEWED", "SELECTED", "POPULATED", "MISSING"]], null=False, blank=False, default="MISSING")
 
 class RelatedChantsClass(models.Model):
+    """This class has no fields, its only role is to point back to the list of chants that point to a given instance of this class,
+    in order to easily access duplicates of a given chant."""
     pass
 
 class TexSnippet(models.Model):
@@ -63,17 +77,23 @@ class TexSnippet(models.Model):
     code = models.CharField(max_length=10)
     feast_position = models.IntegerField()
     def filename(self):
-      return self.feast.code + self.code + ".tex"
+      return self.code + ".tex"
 
 class Feast(models.Model):
-    """Basic feast model"""
+    """This class represents not only a feast, but any liturgical day. All informations pertinent to printing this day in the book are here.
+    The book might display the name of this day 'title' (mandatory), its exact calendar day 'day', its rank under both sets of rubrics.
+    Every feast has an identification code that will prefix its chants' identification code: F1..F7 for Sun..Sat, A1 for 1st Week of Advent, etc.
+    A feasts has chants, and tex snippets (rubrics), which are intertwined according to their 'feast_position' field.
+    """
     day = models.CharField(max_length = 300, null=True, blank=True)
     title = models.CharField(max_length = 300, null=False, default="REMOVE_ME")
     rank_54 = models.CharField(max_length = 200, null=True, blank=True)
     rank_60 = models.CharField(max_length = 200, null=True, blank=True)
     code = models.CharField(max_length = 10, null=False, default="ERROR", unique=True)
-    order = models.IntegerField(null=False, default=0)
     # currently, ordinary = 10, tempore = 100, psanctis = 2350, csanctis = 5290
+    order = models.IntegerField(null=False, default=0)
+    # the contents of 'header' will be displayed on the page's header throughout the feast.
     header = models.CharField(max_length = 200, null=True, blank=True)
+    # 1 is for the most solemn occasions, 2 is for all feasts and sundays, 3 is normally for ferias.
     title_level = models.IntegerField(null=False, default=1)
 

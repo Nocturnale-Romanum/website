@@ -21,13 +21,23 @@
 </p>
 <p>Status : {{ chant.status }}</p>
 
+{% if selected %}
+
 <h4>Selected proposal :</h4>
 
-{% if selected %}
+{{ selected }}
+
+{% endif %}
+
+<h4>My proposal :</h4>
+
+{% if request.user.is_authenticated %}
+
+<a href="/edit_proposal/{{ chant.code }}/"><button type="button" class="btn btn-outline-primary me-2">Edit my proposal</button></a>
 
 {% else %}
 
-None
+<a href="/login/"><button type="button" class="btn btn-outline-primary me-2">Log in to edit my proposal</button></a>
 
 {% endif %}
 
