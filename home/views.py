@@ -1,4 +1,6 @@
 from .models import *
+from .forms import *
+
 from django.http import HttpResponse
 from django.template import loader
 from django.shortcuts import get_object_or_404, redirect
@@ -66,18 +68,34 @@ def feast(request, fcode):
 
 def chant(request, hcode):
   """Passes to a template the contents of a chant : metadata and list of associated proposals.
-  If one proposal is selected, it is singled out for display."""
+  If one proposal is selected, it is singled out for display.
+  If the user has submitted a proposal, it is singled out for display."""
   template = loader.get_template('home/chant.html')
   chant = get_object_or_404(Chant, code=hcode)
   selected = chant.selected_proposal
   unselected = chant.proposals.all()
   if selected:
     unselected = unselected.exclude(pk=selected.pk)
+    selected_img_path = selected.imgurl()
+  else:
+    selected_img_path = None
+  if request.user.is_authenticated:
+    try:
+      userproposal = chant.proposals.get(submitter = request.user)
+      userproposal_img_path = userproposal.imgurl()
+      unselected = unselected.exclude(pk = userproposal.pk)
+    except:
+      userproposal = None
+      userproposal_img_path = None
+  else:
+    userproposal = None
+    userproposal_img_path = None
   context = {
     'feastURLprefix' : feastURLprefix,
     'chant' : chant,
-    'selected' : selected,
-    'unselected' : unselected,
+    'selected' : {'proposal': selected, 'link': selected_img_path},
+    'userproposal' : {'proposal': userproposal, 'link': userproposal_img_path},
+    'unselected' : [{'proposal': p, 'link': p.imgurl()} for p in unselected],
   }
   return HttpResponse(template.render(context, request))
 
@@ -88,8 +106,29 @@ def edit_proposal(request, hcode):
   chant = get_object_or_404(Chant, code=hcode)
   if not request.user.is_authenticated :
     return redirect("/"+chantURLprefix+"/"+hcode)
+  proposalSet = chant.proposals.filter(submitter = request.user)
+  if proposalSet :
+    proposal = proposalSet[0]
+    f = open(proposal.filepath()).read().split("%%")
+    header = f[0].strip()
+    gabc = "%%".join(f[1:]).strip()
+    modediff = header.split("mode:")[1].split(";")[0].strip()
+    try:
+      mode = modediff[0]
+    except:
+      mode = None
+    try:
+      diff = modediff[1]
+    except:
+      diff = None
+  else :
+    gabc = None
+    mode = None
+    diff = None
+  form = ProposalEditForm(initial = {'gabc': gabc, 'mode': mode, 'diff': diff})
   context = {
     'chantURLprefix' : chantURLprefix,
     'chant' : chant,
+    'form' : form,
   }
   return HttpResponse(template.render(context, request))

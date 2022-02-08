@@ -1,3 +1,5 @@
+import os
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
@@ -7,6 +9,11 @@ from wagtail.core.fields import RichTextField
 from wagtail.admin.edit_handlers import FieldPanel, PageChooserPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
 
+from tex_build.build import build
+
+gabcFolder = os.path.join("nocturnale", "static", "gabc")
+pngFolder = os.path.join("nocturnale", "static", "pngs")
+pngUrlPrefix = "/static/pngs/"
 
 class HomePage(Page):
     """Somewhat generic page model.
@@ -36,17 +43,37 @@ class Proposal(models.Model):
     # this version field is not used at the time.
     version = models.CharField(max_length=100, blank=True)
     # when a chant gets its first proposal, it should go from MISSING to POPULATED
-    def create(self, **obj_data):
-      obj_data['version'] = obj_data['version'].strip()
-      if obj_data['version'] == "":
-        obj_data['version'] = obj_data['submitter'].username
-      c = obj_data['chant']
-      if c.status == "MISSING":
-        c.status = "POPULATED"
-        c.save()
-      super().create(**obj_data)
+    def save(self, *args, **kwargs):
+      submitter = kwargs['submitter']
+      if 'version' not in kwargs:
+        self.version = submitter.username
+      self.submitter = submitter
+      chant = kwargs['chant']
+      if chant.status == "MISSING":
+        chant.status = "POPULATED"
+        chant.save()
+      super(Model, self).save(*args, **kwargs)
     def filename(self):
       return self.chant.code + "_" + self.submitter.username + ".gabc"
+    def filepath(self):
+      return os.path.join(gabcFolder, self.filename())
+    def imgname(self):
+      return self.chant.code + "_" + self.submitter.username + ".png"
+    def imgpath(self):
+      return os.path.join(pngFolder, self.imgname())
+    def imgurl(self):
+      return pngUrlPrefix+self.imgname()
+    def makefile(self, gabc, mode, differentia):
+      f = open(self.filepath(), 'w')
+      f.write("name:{};\n".format(self.chant.incipit))
+      f.write("office-part:{};\n".format(self.chant.office_part))
+      f.write("mode:{}{};\n".format(mode, differentia))
+      f.write("submitter:{};\n".format(self.submitter.username))
+      f.write("%%\n")
+      f.write(gabc+"\n")
+      f.close()
+    def makepng(self):
+      build(os.path.join(gabcFolder, self.filename()), pngFolder)
 
 class Chant(models.Model):
     """This class represents a chant entry, that is, a specific sung part of a given day's Matins.

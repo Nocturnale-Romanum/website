@@ -21,11 +21,13 @@
 </p>
 <p>Status : {{ chant.status }}</p>
 
-{% if selected %}
+{% if selected.proposal %}
 
 <h4>Selected proposal :</h4>
 
-{{ selected }}
+Submitted by : {{ selected.proposal.submitter }}
+
+<img src="{{ selected.link }}" class="img-fluid" alt="image build failed or ongoing">
 
 {% endif %}
 
@@ -33,7 +35,17 @@
 
 {% if request.user.is_authenticated %}
 
+  {% if userproposal.proposal %}
+
 <a href="/edit_proposal/{{ chant.code }}/"><button type="button" class="btn btn-outline-primary me-2">Edit my proposal</button></a>
+
+<img src="{{ userproposal.link }}" class="img-fluid" alt="image build failed or ongoing">
+
+  {% else %}
+
+<a href="/edit_proposal/{{ chant.code }}/"><button type="button" class="btn btn-outline-primary me-2">Create my proposal</button></a>
+
+  {% endif %}
 
 {% else %}
 
@@ -43,9 +55,11 @@
 
 <h4>Proposals :</h4>
 
-{% for p in unselected %}
+{% for data in unselected %}
 
-p.submitter
+Submitted by : {{ data.proposal.submitter }}
+
+<img src="{{ data.link }}" class="img-fluid" alt="image build failed or ongoing">
 
 {% endfor %}
 

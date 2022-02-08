@@ -9,3 +9,7 @@ media/*
 nocturnale/settings/mysql.conf
 nocturnale/settings/dev.py
 nocturnale/settings/production.py
+nocturnale/static/pngs/*
+nocturnale/static/gabc/*
+tex_build/*
+log

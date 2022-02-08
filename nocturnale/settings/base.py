@@ -56,6 +56,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
 
+    'crispy_forms',
+
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -223,3 +225,7 @@ DEFAULT_FROM_EMAIL = "Nocturnale Romanum <noreply@marteo.fr>"
 
 # Default field type for primary keys for models that do not define one
 DEFAULT_AUTO_FIELD='django.db.models.AutoField'
+
+# Added for crispy forms as per https://simpleisbetterthancomplex.com/tutorial/2018/08/13/how-to-use-bootstrap-4-forms-with-django.html
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+

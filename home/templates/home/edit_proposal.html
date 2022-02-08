@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block body_class %}template-homepage{% endblock %}
 
@@ -20,7 +21,21 @@
    {% endif %}
 </p>
 
-
+<form method="post">
+  {% csrf_token %}
+  <div class="row">
+    <div class="col-6">
+      {{ form.mode|as_crispy_field }}
+    </div>
+    <div class="col-6">
+      {{ form.diff|as_crispy_field }}
+    </div>
+  </div>
+  <div class="row">
+      {{ form.gabc|as_crispy_field }}
+  </div>
+  <button type="submit" class="btn btn-success">Save changes</button>
+</form>
 
 </div>
 </div>
