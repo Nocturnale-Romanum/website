@@ -44,15 +44,16 @@ class Proposal(models.Model):
     version = models.CharField(max_length=100, blank=True)
     # when a chant gets its first proposal, it should go from MISSING to POPULATED
     def save(self, *args, **kwargs):
-      submitter = kwargs['submitter']
+      if 'submitter' in kwargs:
+        self.submitter = kwargs['submitter']
       if 'version' not in kwargs:
-        self.version = submitter.username
-      self.submitter = submitter
-      chant = kwargs['chant']
-      if chant.status == "MISSING":
-        chant.status = "POPULATED"
-        chant.save()
-      super(Model, self).save(*args, **kwargs)
+        self.version = self.submitter.username
+      if 'chant' in kwargs:
+        self.chant = kwargs['chant']
+      if self.chant.status == "MISSING":
+        self.chant.status = "POPULATED"
+        self.chant.save()
+      super(Proposal, self).save(*args, **kwargs)
     def filename(self):
       return self.chant.code + "_" + self.submitter.username + ".gabc"
     def filepath(self):

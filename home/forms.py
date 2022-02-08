@@ -17,7 +17,7 @@ class ProposalEditForm(forms.Form):
     ('D','D'),
     ('E','E'),
     ('P','T.pereg.'),
-  ])
+  ], required=False)
   diff = forms.ChoiceField(choices = [
     ('',''),
     ('a','a'),
@@ -37,5 +37,5 @@ class ProposalEditForm(forms.Form):
     ('g2','g2'),
     ('g3','g3'),
     ('a','a'),
-  ])
+  ], required=False)
   gabc = forms.CharField(label='GABC code', widget=forms.Textarea(attrs={'rows':18}) )

@@ -106,29 +106,40 @@ def edit_proposal(request, hcode):
   chant = get_object_or_404(Chant, code=hcode)
   if not request.user.is_authenticated :
     return redirect("/"+chantURLprefix+"/"+hcode)
-  proposalSet = chant.proposals.filter(submitter = request.user)
-  if proposalSet :
-    proposal = proposalSet[0]
-    f = open(proposal.filepath()).read().split("%%")
-    header = f[0].strip()
-    gabc = "%%".join(f[1:]).strip()
-    modediff = header.split("mode:")[1].split(";")[0].strip()
-    try:
-      mode = modediff[0]
-    except:
+  if request.method == "GET":
+    proposalSet = chant.proposals.filter(submitter = request.user)
+    if proposalSet :
+      proposal = proposalSet[0]
+      f = open(proposal.filepath()).read().split("%%")
+      header = f[0].strip()
+      gabc = "%%".join(f[1:]).strip()
+      modediff = header.split("mode:")[1].split(";")[0].strip()
+      try:
+        mode = modediff[0]
+      except:
+        mode = None
+      try:
+        diff = modediff[1]
+      except:
+        diff = None
+    else :
+      gabc = None
       mode = None
-    try:
-      diff = modediff[1]
-    except:
       diff = None
-  else :
-    gabc = None
-    mode = None
-    diff = None
-  form = ProposalEditForm(initial = {'gabc': gabc, 'mode': mode, 'diff': diff})
-  context = {
-    'chantURLprefix' : chantURLprefix,
-    'chant' : chant,
-    'form' : form,
-  }
-  return HttpResponse(template.render(context, request))
+    form = ProposalEditForm(initial = {'gabc': gabc, 'mode': mode, 'diff': diff})
+    context = {
+      'chantURLprefix' : chantURLprefix,
+      'chant' : chant,
+      'form' : form,
+    }
+    return HttpResponse(template.render(context, request))
+  elif request.method == "POST":
+    print(request.user.username)
+    try:
+      proposal = chant.proposals.get(submitter = request.user)
+    except:
+      proposal = Proposal(submitter = request.user, chant = chant)
+    proposal.makefile(request.POST.get('gabc'), request.POST.get('mode'), request.POST.get('differentia'))
+    proposal.save()
+    proposal.makepng()
+    return redirect("/"+chantURLprefix+"/"+hcode)
