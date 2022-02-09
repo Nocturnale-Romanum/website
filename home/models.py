@@ -65,6 +65,10 @@ class Proposal(models.Model):
     def imgurl(self):
       return pngUrlPrefix+self.imgname()
     def makefile(self, gabc, mode, differentia):
+      if mode is None:
+        mode = ""
+      if differentia is None:
+        differentia = ""
       f = open(self.filepath(), 'w')
       f.write("name:{};\n".format(self.chant.incipit))
       f.write("office-part:{};\n".format(self.chant.office_part))
