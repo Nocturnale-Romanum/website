@@ -99,7 +99,7 @@ def chant(request, hcode):
   }
   return HttpResponse(template.render(context, request))
 
-def edit_proposal(request, hcode):
+def edit_proposal(request, hcode, cloned=""):
   """If the user is authenticated, passes to a template the necessary informations to edit their proposal.
   If the user is not authenticated, redirects to the relevant chant's page."""
   template = loader.get_template('home/edit_proposal.html')
@@ -107,8 +107,12 @@ def edit_proposal(request, hcode):
   if not request.user.is_authenticated :
     return redirect("/"+chantURLprefix+"/"+hcode)
   if request.method == "GET":
-    proposalSet = chant.proposals.filter(submitter = request.user)
-    if proposalSet :
+    clonedUser = User.objects.filter(username=cloned)
+    if clonedUser: # a valid user was passed: we fetch their proposal
+      proposalSet = chant.proposals.filter(submitter = clonedUser[0])
+    else: # no valid user was passed: we fetch the request user's proposal
+      proposalSet = chant.proposals.filter(submitter = request.user)
+    if proposalSet : # we found an existing proposal, from the request user, or another user that was passed
       proposal = proposalSet[0]
       f = open(proposal.filepath()).read().split("%%")
       header = f[0].strip()
@@ -119,7 +123,7 @@ def edit_proposal(request, hcode):
       except:
         mode = None
       try:
-        diff = modediff[1]
+        diff = modediff[1:]
       except:
         diff = None
     else :
@@ -134,7 +138,6 @@ def edit_proposal(request, hcode):
     }
     return HttpResponse(template.render(context, request))
   elif request.method == "POST":
-    print(request.user.username)
     try:
       proposal = chant.proposals.get(submitter = request.user)
     except:
@@ -143,3 +146,6 @@ def edit_proposal(request, hcode):
     proposal.save()
     proposal.makepng()
     return redirect("/"+chantURLprefix+"/"+hcode)
+
+def proposal(request, hcode, submitter):
+  pass
