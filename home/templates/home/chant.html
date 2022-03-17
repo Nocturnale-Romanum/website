@@ -51,13 +51,18 @@ Submitted by : {{ selected.proposal.submitter }}
 
   {% if selected.comments %}
 
-  Latest comments:
+  <h5>Latest comments:</h5>
 
     {% for comment in selected.comments %}
 
-    {{ comment.author }}, {{ comment.date }}
-
-    {{ comment.text }}
+    <figure>
+      <blockquote class="blockquote">
+        {{ comment.text }}
+      </blockquote>
+      <figcaption class="blockquote-footer">
+        {{ comment.author }} - <cite>{{ comment.date }}</cite>
+      </figcaption>
+    </figure>
 
     {% endfor %}
 
@@ -103,13 +108,18 @@ Submitted by : {{ selected.proposal.submitter }}
 
     {% if userproposal.comments %}
 
-  Latest comments:
+  <h5>Latest comments:</h5>
 
-      {% for comment in data.comments %}
+      {% for comment in userproposal.comments %}
 
-    {{ comment.author }}, {{ comment.date }}
-
-    {{ comment.text }}
+    <figure>
+      <blockquote class="blockquote">
+        {{ comment.text }}
+      </blockquote>
+      <figcaption class="blockquote-footer">
+        {{ comment.author }} - <cite>{{ comment.date }}</cite>
+      </figcaption>
+    </figure>
 
       {% endfor %}
 
@@ -140,7 +150,7 @@ Submitted by : {{ selected.proposal.submitter }}
 
 {% for data in unselected %}
 
-<br><b>Submitted by: {{ data.proposal.submitter }}</b><br>
+<br><h5>Submitted by: {{ data.proposal.submitter }}</h5><br>
 
 <!-- parent has : <div class="row"><div class="col-md-8 offset-md-2"> -->
 </div></div>
@@ -168,13 +178,18 @@ Submitted by : {{ selected.proposal.submitter }}
 
   {% if data.comments %}
 
-  Latest comments:
+  <h5>Latest comments:</h5>
 
     {% for comment in data.comments %}
 
-    {{ comment.author }}, {{ comment.date }}
-
-    {{ comment.text }}
+    <figure>
+      <blockquote class="blockquote">
+        {{ comment.text }}
+      </blockquote>
+      <figcaption class="blockquote-footer">
+        {{ comment.author }} - <cite>{{ comment.date }}</cite>
+      </figcaption>
+    </figure>
 
     {% endfor %}
 

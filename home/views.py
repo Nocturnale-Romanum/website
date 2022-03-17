@@ -10,6 +10,7 @@ feastURLprefix = "feast"
 chantURLprefix = "chant"
 indexURLprefix = "index"
 contentsURLprefix = "contents"
+proposalURLprefix = "proposal"
 
 def contents(request):
   """Passes to a template the list of feasts that have at least one proper chant, in the order of the book.
@@ -78,19 +79,23 @@ def chant(request, hcode):
     unselected = unselected.exclude(pk=selected.pk)
     selected_source_url = selected.sourceurl()
     selected_img_path = selected.imgurl()
+    selected_comments = selected.comments.order_by('date')
   else:
     selected_img_path = None
     selected_source_url = None
+    selected_comments = None
   if request.user.is_authenticated:
     try:
       userproposal = chant.proposals.get(submitter = request.user)
       userproposal_img_path = userproposal.imgurl()
       userproposal_source_url = userproposal.sourceurl()
+      userproposal_comments = userproposal.comments.order_by('date')
       unselected = unselected.exclude(pk = userproposal.pk)
     except:
       userproposal = None
       userproposal_img_path = None
       userproposal_source_url = None
+      userproposal_comments = None
   else:
     userproposal = None
     userproposal_img_path = None
@@ -98,9 +103,9 @@ def chant(request, hcode):
   context = {
     'feastURLprefix' : feastURLprefix,
     'chant' : chant,
-    'selected' : {'proposal': selected, 'link': selected_img_path, 'sourcelink': selected_source_url},
-    'userproposal' : {'proposal': userproposal, 'link': userproposal_img_path, 'sourcelink': userproposal_source_url},
-    'unselected' : [{'proposal': p, 'link': p.imgurl(), 'sourcelink': p.sourceurl()} for p in unselected],
+    'selected' : {'proposal': selected, 'link': selected_img_path, 'sourcelink': selected_source_url, 'comments': selected_comments},
+    'userproposal' : {'proposal': userproposal, 'link': userproposal_img_path, 'sourcelink': userproposal_source_url, 'comments': userproposal_comments},
+    'unselected' : [{'proposal': p, 'link': p.imgurl(), 'sourcelink': p.sourceurl(), 'comments': p.comments.order_by('date')} for p in unselected],
   }
   return HttpResponse(template.render(context, request))
 
@@ -166,4 +171,28 @@ def edit_proposal(request, hcode, cloned=""):
     return redirect("/"+chantURLprefix+"/"+hcode)
 
 def proposal(request, hcode, submitter):
-  pass
+  template = loader.get_template('home/proposal.html')
+  c = get_object_or_404(Chant, code=hcode)
+  p = get_object_or_404(Proposal, chant=c, submitter__username=submitter)
+  if request.method == "GET":
+    try:
+      sourcelink = p.sourceurl()
+    except:
+      sourcelink = None
+    form = CommentForm()
+    context = {
+      'chantURLprefix': chantURLprefix,
+      'proposal': p,
+      'imglink': p.imgurl(),
+      'comments': p.comments.order_by('date'),
+      'sourcelink': sourcelink,
+      'chant': c,
+      'form': form,
+    }
+    return HttpResponse(template.render(context, request))
+  elif request.method == "POST":
+    if request.user.is_authenticated :
+      text = request.POST.get("comment")
+      c = Comment(proposal = p, text = text, author = request.user)
+      c.save()
+    return redirect("/"+proposalURLprefix+"/"+hcode+"/"+submitter)

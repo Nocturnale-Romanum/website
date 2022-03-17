@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -140,4 +141,11 @@ class Feast(models.Model):
     header = models.CharField(max_length = 200, null=True, blank=True)
     # 1 is for the most solemn occasions, 2 is for all feasts and sundays, 3 is normally for ferias.
     title_level = models.IntegerField(null=False, default=1)
+
+class Comment(models.Model):
+    """A basic Comment model"""
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="comments", null=False, on_delete=models.PROTECT)
+    date = models.DateTimeField(default=datetime.now)
+    text = models.CharField(max_length=2000, null=False, blank=False)
+    proposal = models.ForeignKey("Proposal", related_name="comments", null=False, on_delete=models.CASCADE)
 
