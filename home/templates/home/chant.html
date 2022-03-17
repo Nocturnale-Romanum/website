@@ -36,7 +36,16 @@ Submitted by : {{ selected.proposal.submitter }}
     <a href="/edit_proposal/{{ chant.code }}/{{ selected.proposal.submitter }}"><button type="button" class="btn btn-outline-primary me-2">Clone this proposal into mine</button></a><br><br>
   {% endif %}
 
-    Source: <a href="{{ selected.sourcelink }}">{{ selected.proposal.source }}, {{ selected.proposal.sourcepage }}</a><br><br>
+  {% if selected.source %}
+
+    Source: <a href="{{ selected.sourcelink }}">{{ selected.proposal.source.siglum }}, {{ selected.proposal.sourcepage }}</a><br><br>
+
+  {% else %}
+
+    No source<br><br>
+
+  {% endif %}
+
 
     <a href="/proposal/{{ chant.code}}/{{ selected.proposal.submitter }}">See and add comments</a><br><br>
 
@@ -81,8 +90,15 @@ Submitted by : {{ selected.proposal.submitter }}
   <div class="col-md-4">
     <a href="/edit_proposal/{{ chant.code }}/"><button type="button" class="btn btn-outline-primary me-2">Edit my proposal</button></a><br><br>
 
-    Source: <a href="{{ userproposal.sourcelink }}">{{ data.proposal.source }}, {{ data.proposal.sourcepage }}</a><br><br>
+    {% if userproposal.proposal.source %}
 
+    Source: <a href="{{ userproposal.sourcelink }}">{{ userproposal.proposal.source.siglum }}, {{ userproposal.proposal.sourcepage }}</a><br><br>
+
+    {% else %}
+
+    No source<br><br>
+
+    {% endif %}
     <a href="/proposal/{{ chant.code}}/{{ userproposal.proposal.submitter }}">See and add comments</a><br><br>
 
     {% if userproposal.comments %}
@@ -134,31 +150,39 @@ Submitted by : {{ selected.proposal.submitter }}
     <img src="{{ data.link }}" class="img-fluid" alt="image build failed or ongoing">
   </div>
   <div class="col-md-4">
-{% if request.user.is_authenticated %}
+  {% if request.user.is_authenticated %}
     <a href="/edit_proposal/{{ chant.code }}/{{ data.proposal.submitter }}"><button type="button" class="btn btn-outline-primary me-2">Clone this proposal into mine</button></a><br><br>
-{% endif %}
+  {% endif %}
 
-    Source: <a href="{{ data.sourcelink }}">{{ data.proposal.source }}, {{ data.proposal.sourcepage }}</a><br><br>
+  {% if data.proposal.source %}
+
+    Source: <a href="{{ data.sourcelink }}">{{ data.proposal.source.siglum }}, {{ data.proposal.sourcepage }}</a><br><br>
+
+  {% else %}
+
+    No source<br><br>
+
+  {% endif %}
 
     <a href="/proposal/{{ chant.code}}/{{ data.proposal.submitter }}">See and add comments</a><br><br>
 
-{% if data.comments %}
+  {% if data.comments %}
 
   Latest comments:
 
-  {% for comment in data.comments %}
+    {% for comment in data.comments %}
 
     {{ comment.author }}, {{ comment.date }}
 
     {{ comment.text }}
 
-  {% endfor %}
+    {% endfor %}
 
-{% else %}
+  {% else %}
 
   No comments
 
-{% endif %}
+  {% endif %}
 
   </div>
 </div>

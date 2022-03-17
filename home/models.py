@@ -35,6 +35,11 @@ class HomePage(Page):
         FieldPanel("text"),
     ]
 
+class Source(models.Model):
+    siglum = models.CharField(max_length=100, blank=False)
+    # should be of the form http://baseurl.../.../{}/..." where {} will be replaced with the folio number
+    urlpattern = models.CharField(max_length=200, blank=False)
+
 class Proposal(models.Model):
     """This class represents a bit of GABC code and associated metadata,
     submitted by a user as restitution of a given chant."""
@@ -43,6 +48,8 @@ class Proposal(models.Model):
     # this version field is not used at the time.
     version = models.CharField(max_length=100, blank=True)
     # when a chant gets its first proposal, it should go from MISSING to POPULATED
+    source = models.ForeignKey("Source", related_name="proposals", null=True, on_delete=models.SET_NULL)
+    sourcepage = models.CharField(max_length=10, blank=True)
     def save(self, *args, **kwargs):
       if 'submitter' in kwargs:
         self.submitter = kwargs['submitter']
@@ -79,6 +86,11 @@ class Proposal(models.Model):
       f.close()
     def makepng(self):
       build(os.path.join(gabcFolder, self.filename()), pngFolder)
+    def sourceurl(self):
+      if self.source:
+        return self.source.urlpattern.format(self.sourcepage)
+      else:
+        return ""
 
 class Chant(models.Model):
     """This class represents a chant entry, that is, a specific sung part of a given day's Matins.

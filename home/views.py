@@ -76,26 +76,31 @@ def chant(request, hcode):
   unselected = chant.proposals.all()
   if selected:
     unselected = unselected.exclude(pk=selected.pk)
+    selected_source_url = selected.sourceurl()
     selected_img_path = selected.imgurl()
   else:
     selected_img_path = None
+    selected_source_url = None
   if request.user.is_authenticated:
     try:
       userproposal = chant.proposals.get(submitter = request.user)
       userproposal_img_path = userproposal.imgurl()
+      userproposal_source_url = userproposal.sourceurl()
       unselected = unselected.exclude(pk = userproposal.pk)
     except:
       userproposal = None
       userproposal_img_path = None
+      userproposal_source_url = None
   else:
     userproposal = None
     userproposal_img_path = None
+    userproposal_source_url = None
   context = {
     'feastURLprefix' : feastURLprefix,
     'chant' : chant,
-    'selected' : {'proposal': selected, 'link': selected_img_path},
-    'userproposal' : {'proposal': userproposal, 'link': userproposal_img_path},
-    'unselected' : [{'proposal': p, 'link': p.imgurl()} for p in unselected],
+    'selected' : {'proposal': selected, 'link': selected_img_path, 'sourcelink': selected_source_url},
+    'userproposal' : {'proposal': userproposal, 'link': userproposal_img_path, 'sourcelink': userproposal_source_url},
+    'unselected' : [{'proposal': p, 'link': p.imgurl(), 'sourcelink': p.sourceurl()} for p in unselected],
   }
   return HttpResponse(template.render(context, request))
 
@@ -126,11 +131,16 @@ def edit_proposal(request, hcode, cloned=""):
         diff = modediff[1:]
       except:
         diff = None
+      try:
+        source = proposal.source.siglum
+      except:
+        source = None
+      sourcepage = proposal.sourcepage
     else :
       gabc = None
       mode = None
       diff = None
-    form = ProposalEditForm(initial = {'gabc': gabc, 'mode': mode, 'diff': diff})
+    form = ProposalEditForm(initial = {'gabc': gabc, 'mode': mode, 'diff': diff, 'source': source, 'sourcepage': sourcepage})
     context = {
       'chantURLprefix' : chantURLprefix,
       'chant' : chant,
@@ -142,6 +152,14 @@ def edit_proposal(request, hcode, cloned=""):
       proposal = chant.proposals.get(submitter = request.user)
     except:
       proposal = Proposal(submitter = request.user, chant = chant)
+    source_siglum = request.POST.get('source')
+    sourcepage = request.POST.get('sourcepage')
+    try:
+      source = Source.objects.get(siglum = source_siglum)
+    except:
+      source = None
+    proposal.source = source
+    proposal.sourcepage = sourcepage
     proposal.makefile(request.POST.get('gabc'), request.POST.get('mode'), request.POST.get('differentia'))
     proposal.save()
     proposal.makepng()

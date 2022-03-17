@@ -1,4 +1,5 @@
 from django import forms
+from home.models import Source
 
 class ProposalEditForm(forms.Form):
   mode = forms.ChoiceField(choices = [
@@ -18,7 +19,7 @@ class ProposalEditForm(forms.Form):
     ('E','E'),
     ('P','T.pereg.'),
   ], required=False)
-  diff = forms.ChoiceField(choices = [
+  diff = forms.ChoiceField(label='Differentia', choices = [
     ('',''),
     ('a','a'),
     ('a*','a*'),
@@ -39,3 +40,5 @@ class ProposalEditForm(forms.Form):
     ('a','a'),
   ], required=False)
   gabc = forms.CharField(label='GABC code', widget=forms.Textarea(attrs={'rows':18}) )
+  source = forms.ChoiceField(choices = [('','')] + [ (source.siglum, source.siglum) for source in Source.objects.all() ], required=False)
+  sourcepage = forms.CharField(label='Source page', required=False)
