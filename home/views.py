@@ -81,7 +81,8 @@ def chant(request, hcode):
     unselected = unselected.exclude(pk=selected.pk)
     selected_source_url = selected.sourceurl()
     selected_img_path = selected.imgurl()
-    selected_comments = selected.comments.order_by('date')
+    # select the last 3 comments, sorted in chronologic order
+    selected_comments = list(selected.comments.order_by('date'))[-3:]
   else:
     selected_img_path = None
     selected_source_url = None
@@ -91,7 +92,8 @@ def chant(request, hcode):
       userproposal = chant.proposals.get(submitter = request.user)
       userproposal_img_path = userproposal.imgurl()
       userproposal_source_url = userproposal.sourceurl()
-      userproposal_comments = userproposal.comments.order_by('date')
+      # select the last 3 comments, sorted in chronologic order
+      userproposal_comments = list(userproposal.comments.order_by('date'))[-3:]
       unselected = unselected.exclude(pk = userproposal.pk)
     except:
       userproposal = None
@@ -108,7 +110,7 @@ def chant(request, hcode):
     'chant' : chant,
     'selected' : {'proposal': selected, 'link': selected_img_path, 'sourcelink': selected_source_url, 'comments': selected_comments},
     'userproposal' : {'proposal': userproposal, 'link': userproposal_img_path, 'sourcelink': userproposal_source_url, 'comments': userproposal_comments},
-    'unselected' : [{'proposal': p, 'link': p.imgurl(), 'sourcelink': p.sourceurl(), 'comments': p.comments.order_by('date')} for p in unselected],
+    'unselected' : [{'proposal': p, 'link': p.imgurl(), 'sourcelink': p.sourceurl(), 'comments': list(p.comments.order_by('date'))[-3:]} for p in unselected],
   }
   return HttpResponse(template.render(context, request))
 
@@ -205,4 +207,4 @@ def proposal(request, hcode, submitter):
       text = request.POST.get("comment")
       c = Comment(proposal = p, text = text, author = request.user)
       c.save()
-    return redirect("/"+proposalURLprefix+"/"+hcode+"/"+submitter)
+    return redirect("/"+proposalURLprefix+"/"+hcode+"/"+submitter+"/")
