@@ -169,7 +169,7 @@ def edit_proposal(request, hcode, cloned=""):
     proposal.makefile(request.POST.get('gabc'), request.POST.get('mode'), request.POST.get('differentia'))
     proposal.save()
     proposal.makepng()
-    return redirect("/"+chantURLprefix+"/"+hcode)
+    return redirect("/"+chantURLprefix+"/"+hcode+"/")
 
 def proposal(request, hcode, submitter):
   template = loader.get_template('home/proposal.html')

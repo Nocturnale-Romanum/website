@@ -10,8 +10,6 @@ from wagtail.core.fields import RichTextField
 from wagtail.admin.edit_handlers import FieldPanel, PageChooserPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
 
-from tex_build.build import build
-
 gabcFolder = os.path.join("nocturnale", "static", "gabc")
 pngFolder = os.path.join("nocturnale", "static", "pngs")
 pngUrlPrefix = "/static/pngs/"
@@ -86,7 +84,7 @@ class Proposal(models.Model):
       f.write(gabc+"\n")
       f.close()
     def makepng(self):
-      build(os.path.join(gabcFolder, self.filename()), pngFolder)
+      os.system("./tex_build/build.py "+os.path.join(gabcFolder, self.filename())+" "+pngFolder+" &")
     def sourceurl(self):
       if self.source:
         return self.source.urlpattern.format(self.sourcepage)

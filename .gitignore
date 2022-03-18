@@ -11,5 +11,13 @@ nocturnale/settings/dev.py
 nocturnale/settings/production.py
 nocturnale/static/pngs/*
 nocturnale/static/gabc/*
-tex_build/*
+tex_build/*.png
+tex_build/*.gabc
+tex_build/*.pdf
+tex_build/*.tex
+*.gtex
+*.aux
+*.gaux
+*.log
+*.glog
 log
