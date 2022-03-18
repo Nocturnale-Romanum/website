@@ -72,11 +72,19 @@
 
   {% endif %}
 
+  {% if request.user.is_authenticated %}
+
 <form method="post">
   {% csrf_token %}
       {{ form.comment|as_crispy_field }}
   <button type="submit" class="btn btn-success">Add comment</button>
 </form>
+
+  {% else %}
+
+<a href="/login/"><button type="button" class="btn btn-outline-primary me-2">Log in to add comments</button></a>
+
+  {% endif %}
 
 </div>
 </div>
