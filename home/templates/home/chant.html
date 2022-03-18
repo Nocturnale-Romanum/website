@@ -146,18 +146,18 @@ Submitted by : {{ selected.proposal.submitter }}
 
 {% endif %}
 
-<h4>Proposals :</h4>
+<br><h4>Proposals :</h4>
 
 {% for data in unselected %}
 
-<br><h5>Submitted by: {{ data.proposal.submitter }}</h5><br>
+<h5>Submitted by: {{ data.proposal.submitter }}</h5><br>
 
 <!-- parent has : <div class="row"><div class="col-md-8 offset-md-2"> -->
 </div></div>
 
 <div class="row">
   <div class="col-md-6 offset-md-1">
-    <img src="{{ data.link }}" class="img-fluid" alt="image build failed or ongoing">
+    <img src="{{ data.link }}" class="img-fluid" alt="image build failed or ongoing"><br><br>
   </div>
   <div class="col-md-4">
   {% if request.user.is_authenticated %}
