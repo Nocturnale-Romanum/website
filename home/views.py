@@ -1,6 +1,8 @@
 from .models import *
 from .forms import *
 
+import os
+
 from django.http import HttpResponse
 from django.template import loader
 from django.shortcuts import get_object_or_404, redirect
@@ -168,6 +170,13 @@ def edit_proposal(request, hcode, cloned=""):
     proposal.sourcepage = sourcepage
     proposal.makefile(request.POST.get('gabc'), request.POST.get('mode'), request.POST.get('differentia'))
     proposal.save()
+    commitmsg = request.POST.get('comment')
+    comment = Comment(proposal = proposal, text = commitmsg, author = request.user)
+    comment.save()
+    try:
+      os.system("cd nocturnale/static && git add gabc && git commit -m '{} edited {}: {}' && git push".format(request.user.username, chant.code, commitmsg))
+    except:
+      pass
     proposal.makepng()
     return redirect("/"+chantURLprefix+"/"+hcode+"/")
 

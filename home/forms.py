@@ -42,6 +42,7 @@ class ProposalEditForm(forms.Form):
   gabc = forms.CharField(label='GABC code', widget=forms.Textarea(attrs={'rows':18}) )
   source = forms.ChoiceField(choices = [('','')] + [ (source.siglum, source.siglum) for source in Source.objects.all() ], required=False)
   sourcepage = forms.CharField(label='Source page', required=False)
+  comment = forms.CharField(label='Summary of changes', required=True)
 
 class CommentForm(forms.Form):
   comment = forms.CharField(label='Add comment:', widget=forms.Textarea(attrs={'rows':8}), required=True)

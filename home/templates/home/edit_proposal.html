@@ -42,7 +42,18 @@
   <div class="row">
       {{ form.gabc|as_crispy_field }}
   </div>
-  <button type="submit" class="btn btn-success">Save changes</button> Warning: your proposal image does not automatically refresh, please wait a few minutes after saving, and refresh the page.
+  <div class="row">
+      {{ form.comment|as_crispy_field }}
+  </div>
+  <br>
+  <div class="row">
+    <div class="col-4">
+      <button type="submit" class="btn btn-success">Save changes</button>
+    </div>
+    <div class="col-8">
+    Warning: your proposal image does not automatically refresh, please wait a few minutes after saving, and refresh the page.<br><br><br>
+    </div>
+  <div>
 </form>
 
 </div>

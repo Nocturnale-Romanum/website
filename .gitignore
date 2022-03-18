@@ -11,6 +11,14 @@ nocturnale/settings/dev.py
 nocturnale/settings/production.py
 nocturnale/static/pngs/*
 nocturnale/static/gabc/*
+nocturnale/static/psalmi/*
+nocturnale/static/*.tex
+nocturnale/static/.git
+nocturnale/static/.gitignore
+nocturnale/static/*.pdf
+nocturnale/static/README.md
+nocturnale/static/LICENSE
+nocturnale/static/*.txt
 tex_build/*.png
 tex_build/*.gabc
 tex_build/*.pdf
