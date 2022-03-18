@@ -100,6 +100,7 @@ def chant(request, hcode):
     userproposal = None
     userproposal_img_path = None
     userproposal_source_url = None
+    userproposal_comments = None
   context = {
     'feastURLprefix' : feastURLprefix,
     'chant' : chant,
