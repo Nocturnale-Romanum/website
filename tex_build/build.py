@@ -14,7 +14,10 @@ def build(filepath, img_path):
   basename = os.path.splitext(filename)[0]
   texfile = basename+".tex"
   imgfilepath = os.path.join(img_path, basename+".png")
-  os.remove(imgfilepath)
+  try:
+    os.remove(imgfilepath)
+  except:
+    pass
   shutil.copyfile(filepath, os.path.join(build_dir, filename))
   fin = open(os.path.join(build_dir, template_file), "rt")
   fout = open(os.path.join(build_dir, texfile), "wt")
