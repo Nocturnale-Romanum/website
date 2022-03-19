@@ -81,15 +81,18 @@ def chant(request, hcode):
     unselected = unselected.exclude(pk=selected.pk)
     selected_source_url = selected.sourceurl()
     selected_img_path = selected.imgurl()
+    selected_gabc_path = selected.gabcurl()
     # select the last 3 comments, sorted in chronologic order
     selected_comments = list(selected.comments.order_by('date'))[-3:]
   else:
     selected_img_path = None
+    selected_gabc_path = None
     selected_source_url = None
     selected_comments = None
   if request.user.is_authenticated:
     try:
       userproposal = chant.proposals.get(submitter = request.user)
+      userproposal_gabc_path = userproposal.gabcurl()
       userproposal_img_path = userproposal.imgurl()
       userproposal_source_url = userproposal.sourceurl()
       # select the last 3 comments, sorted in chronologic order
@@ -98,19 +101,21 @@ def chant(request, hcode):
     except:
       userproposal = None
       userproposal_img_path = None
+      userproposal_gabc_path = None
       userproposal_source_url = None
       userproposal_comments = None
   else:
     userproposal = None
     userproposal_img_path = None
+    userproposal_gabc_path = None
     userproposal_source_url = None
     userproposal_comments = None
   context = {
     'feastURLprefix' : feastURLprefix,
     'chant' : chant,
-    'selected' : {'proposal': selected, 'link': selected_img_path, 'sourcelink': selected_source_url, 'comments': selected_comments},
-    'userproposal' : {'proposal': userproposal, 'link': userproposal_img_path, 'sourcelink': userproposal_source_url, 'comments': userproposal_comments},
-    'unselected' : [{'proposal': p, 'link': p.imgurl(), 'sourcelink': p.sourceurl(), 'comments': list(p.comments.order_by('date'))[-3:]} for p in unselected],
+    'selected' : {'proposal': selected, 'link': selected_img_path, 'sourcelink': selected_source_url, 'comments': selected_comments, 'gabc': selected_gabc_path},
+    'userproposal' : {'proposal': userproposal, 'link': userproposal_img_path, 'sourcelink': userproposal_source_url, 'comments': userproposal_comments, 'gabc': userproposal_gabc_path},
+    'unselected' : [{'proposal': p, 'link': p.imgurl(), 'sourcelink': p.sourceurl(), 'comments': list(p.comments.order_by('date'))[-3:], 'gabc': p.gabcurl()} for p in unselected],
   }
   return HttpResponse(template.render(context, request))
 
@@ -196,6 +201,7 @@ def proposal(request, hcode, submitter):
       'chantURLprefix': chantURLprefix,
       'proposal': p,
       'imglink': p.imgurl(),
+      'gabc': p.gabcurl(),
       'comments': p.comments.order_by('date'),
       'sourcelink': sourcelink,
       'chant': c,

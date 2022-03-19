@@ -13,6 +13,7 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 gabcFolder = os.path.join("nocturnale", "static", "gabc")
 pngFolder = os.path.join("nocturnale", "static", "pngs")
 pngUrlPrefix = "/static/pngs/"
+gabcUrlPrefix = "/static/gabc/"
 
 class HomePage(Page):
     """Somewhat generic page model.
@@ -70,6 +71,8 @@ class Proposal(models.Model):
       return os.path.join(pngFolder, self.imgname())
     def imgurl(self):
       return pngUrlPrefix+self.imgname()
+    def gabcurl(self):
+      return gabcUrlPrefix+self.filename()
     def makefile(self, gabc, mode, differentia):
       if mode is None:
         mode = ""

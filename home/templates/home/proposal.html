@@ -34,7 +34,7 @@
     <div>
     <div class="row">
       <div class="col-6">
-        Submitter: {{ proposal.submitter.username }}
+        Submitter: {{ proposal.submitter.username }}<br><br>
   {% if request.user.is_authenticated %}
         <a href="/edit_proposal/{{ chant.code }}/{{ proposal.submitter }}"><button type="button" class="btn btn-outline-primary me-2">Clone this proposal into mine</button></a><br><br>
   {% endif %}
@@ -45,6 +45,7 @@
   {% else %}
         No source<br><br>
   {% endif %}
+        <a href="{{ gabc }}"><button type="button" class="btn btn-outline-primary me-2">Download GABC</button></a><br><br>
       </div>
     <div>
     <img src="{{ imglink }}" class="img-fluid" alt="image build failed or ongoing">
