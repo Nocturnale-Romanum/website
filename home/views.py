@@ -183,7 +183,7 @@ def edit_proposal(request, hcode, cloned=""):
     comment = Comment(proposal = proposal, text = commitmsg, author = request.user)
     comment.save()
     try:
-      os.system("cd nocturnale/static && git add gabc && git commit -m '{} edited {}: {}' && git push".format(request.user.username, chant.code, commitmsg))
+      os.system("cd nocturnale/static && git add gabc && git commit -m \"{} edited {}: {}\" && git fetch && git rebase origin/main && git push".format(request.user.username, chant.code, commitmsg))
     except:
       pass
     proposal.makepng()
