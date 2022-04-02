@@ -83,6 +83,8 @@ class Proposal(models.Model):
       f.write("office-part:{};\n".format(self.chant.office_part))
       f.write("mode:{}{};\n".format(mode, differentia))
       f.write("submitter:{};\n".format(self.submitter.username))
+      if "|" in gabc:
+        f.write("nabc-lines:1;\n")
       f.write("%%\n")
       f.write(gabc+"\n")
       f.close()
