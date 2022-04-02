@@ -155,6 +155,7 @@ def edit_proposal(request, hcode, cloned=""):
       gabc = None
       mode = None
       diff = None
+      source = None
     form = ProposalEditForm(initial = {'gabc': gabc, 'mode': mode, 'diff': diff, 'source': source, 'sourcepage': sourcepage})
     context = {
       'chantURLprefix' : chantURLprefix,
