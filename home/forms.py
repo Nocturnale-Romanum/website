@@ -40,7 +40,7 @@ class ProposalEditForm(forms.Form):
     ('a','a'),
   ], required=False)
   gabc = forms.CharField(label='GABC code', widget=forms.Textarea(attrs={'rows':18}) )
-  source = forms.ChoiceField(choices = [('','')] + [ (source.siglum, source.siglum) for source in Source.objects.all() ], required=False)
+  source = forms.ChoiceField(choices = [('','')] + [ (source.siglum, source.siglum) for source in Source.objects.all().order_by('siglum') ], required=False)
   sourcepage = forms.CharField(label='Source page', required=False)
   comment = forms.CharField(label='Summary of changes', required=True)
 
