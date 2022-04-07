@@ -2,6 +2,7 @@ from .models import *
 from .forms import *
 
 import os
+import shlex
 
 from django.http import HttpResponse
 from django.template import loader
@@ -182,8 +183,9 @@ def edit_proposal(request, hcode, cloned=""):
     commitmsg = request.POST.get('comment')
     comment = Comment(proposal = proposal, text = commitmsg, author = request.user)
     comment.save()
+    commitmsg = "{} edited {}: {}".format(request.user.username, chant.code, commitmsg)
     try:
-      os.system("cd nocturnale/static && git add gabc && git commit -m \"{} edited {}: {}\" && git fetch && git rebase origin/main && git push".format(request.user.username, chant.code, commitmsg))
+      os.system("cd nocturnale/static && git add gabc && git commit -m {} && git fetch && git rebase origin/main && git push".format(shlex.quote(commitmsg)))
     except:
       pass
     proposal.makepng()
