@@ -7,7 +7,7 @@
 {% block content %}
 
 <h2>{{ chant.incipit }}</h2>
-<p>Feast: {{ chant.feast.title }}</p>
+<p>Feast: <a href="/{{ feastURLprefix }}/{{ chant.feast.code }}">{{ chant.feast.title }}</a></p>
 <p>Office_part: {{ chant.office_part }}</p>
 <p>Cantus ID: 
    {% if chant.cantus_id %}
