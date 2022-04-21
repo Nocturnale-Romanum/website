@@ -135,18 +135,7 @@ def edit_proposal(request, hcode, cloned=""):
       proposalSet = chant.proposals.filter(submitter = request.user)
     if proposalSet : # we found an existing proposal, from the request user, or another user that was passed
       proposal = proposalSet[0]
-      f = open(proposal.filepath()).read().split("%%")
-      header = f[0].strip()
-      gabc = "%%".join(f[1:]).strip()
-      modediff = header.split("mode:")[1].split(";")[0].strip()
-      try:
-        mode = modediff[0]
-      except:
-        mode = None
-      try:
-        diff = modediff[1:]
-      except:
-        diff = None
+      (gabc, mode, diff) = proposal.gabc_mode_diff()
       try:
         source = proposal.source.siglum
       except:
@@ -178,17 +167,12 @@ def edit_proposal(request, hcode, cloned=""):
       source = None
     proposal.source = source
     proposal.sourcepage = sourcepage
-    proposal.makefile(request.POST.get('gabc'), request.POST.get('mode'), request.POST.get('differentia'))
     proposal.save()
-    commitmsg = request.POST.get('comment')
-    comment = Comment(proposal = proposal, text = commitmsg, author = request.user)
+    commentmsg = request.POST.get('comment')
+    comment = Comment(proposal = proposal, text = commentmsg, author = request.user)
     comment.save()
-    commitmsg = "{} edited {}: {}".format(request.user.username, chant.code, commitmsg)
-    try:
-      os.system("cd nocturnale/static && git add gabc && git commit -m {} && git fetch && git rebase origin/main && git push".format(shlex.quote(commitmsg)))
-    except:
-      pass
-    proposal.makepng()
+    commitmsg = "{} edited {}: {}".format(request.user.username, chant.code, commentmsg)
+    proposal.update(gabc=request.POST.get('gabc'), mode=request.POST.get('mode'), differentia=request.POST.get('differentia'), commitmsg=commitmsg)
     return redirect("/"+chantURLprefix+"/"+hcode+"/")
 
 def proposal(request, hcode, submitter):

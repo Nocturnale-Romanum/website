@@ -95,6 +95,40 @@ class Proposal(models.Model):
         return self.source.urlpattern.format(self.sourcepage)
       else:
         return ""
+    def gabc_mode_diff(self):
+      try:
+        f = open(self.filepath()).read().split("%%")
+      except:
+        return (None, None, None)
+      header = f[0].strip()
+      gabc = "%%".join(f[1:]).strip()
+      modediff = header.split("mode:")[1].split(";")[0].strip()
+      try:
+        mode = modediff[0]
+      except:
+        mode = None
+      try:
+        diff = modediff[1:]
+      except:
+        diff = None
+      return (gabc, mode, diff)
+    def update(self, gabc=None, mode=None, differentia=None, commitmsg=None):
+      (old_gabc, old_mode, old_diff) = self.gabc_mode_diff()
+      if not gabc:
+        gabc = old_gabc
+      if not mode:
+        mode = old_mode
+      if not differentia:
+        differentia = old_diff
+      if not commitmsg:
+        commitmsg = self.chant.code + " by " + self.submitter + " was updated from the command line."
+      self.makefile(gabc, mode, differentia)
+      try:
+        os.system("cd nocturnale/static && git add gabc && git commit -m {} && git fetch && git rebase origin/main && git push".format(shlex.quote(commitmsg)))
+      except:
+        pass
+      self.makepng()
+
 
 class Chant(models.Model):
     """This class represents a chant entry, that is, a specific sung part of a given day's Matins.
