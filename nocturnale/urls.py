@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.urls import include, path
 from django.contrib import admin
+from django.views.generic.base import TemplateView
 
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.core import urls as wagtail_urls
@@ -27,6 +28,7 @@ urlpatterns = [
     path('edit_proposal/<slug:hcode>/', home_views.edit_proposal),
     path('edit_proposal/<slug:hcode>/<slug:cloned>/', home_views.edit_proposal),
     path('proposal/<slug:hcode>/<slug:submitter>/', home_views.proposal),
+    path('robots.txt', TemplateView.as_view(template_name="robots.txt", content_type="text/plain") ),
 ]
 
 
