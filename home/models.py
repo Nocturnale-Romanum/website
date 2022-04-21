@@ -124,7 +124,7 @@ class Proposal(models.Model):
         commitmsg = self.chant.code + " by " + self.submitter + " was updated from the command line."
       self.makefile(gabc, mode, differentia)
       try:
-        os.system("cd nocturnale/static && git add gabc && git commit -m {} && git fetch && git rebase origin/main && git push".format(shlex.quote(commitmsg)))
+        os.system("cd nocturnale/static && git add gabc && git commit -m {} && git fetch && git rebase origin/main && git push".format(commitmsg))
       except:
         pass
       self.makepng()
