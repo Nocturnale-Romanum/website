@@ -39,6 +39,8 @@ class Source(models.Model):
     siglum = models.CharField(max_length=100, blank=False)
     # should be of the form http://baseurl.../.../{}/..." where {} will be replaced with the folio number
     urlpattern = models.CharField(max_length=200, blank=False)
+    def __str__(self):
+      return self.siglum
 
 class Proposal(models.Model):
     """This class represents a bit of GABC code and associated metadata,
@@ -61,6 +63,8 @@ class Proposal(models.Model):
         self.chant.status = "POPULATED"
         self.chant.save()
       super(Proposal, self).save(*args, **kwargs)
+    def __str__(self):
+      return (self.chant.code + " by " + self.submitter.username)
     def filename(self):
       return self.chant.code + "_" + self.submitter.username + ".gabc"
     def filepath(self):
@@ -146,6 +150,8 @@ class Chant(models.Model):
     # to a related_chants_class which points back to all the "duplication family"
     related_chants_class = models.ForeignKey("RelatedChantsClass", null=True, on_delete=models.SET_NULL, related_name="chants")
     status = models.CharField(max_length=10, choices=[(x,x) for x in ["DEFINITIVE", "REVIEWED", "SELECTED", "POPULATED", "MISSING"]], null=False, blank=False, default="MISSING")
+    def __str__(self):
+      return self.code
 
 class RelatedChantsClass(models.Model):
     """This class has no fields, its only role is to point back to the list of chants that point to a given instance of this class,
@@ -178,6 +184,8 @@ class Feast(models.Model):
     header = models.CharField(max_length = 200, null=True, blank=True)
     # 1 is for the most solemn occasions, 2 is for all feasts and sundays, 3 is normally for ferias.
     title_level = models.IntegerField(null=False, default=1)
+    def __str__(self):
+      return self.code
 
 class Comment(models.Model):
     """A basic Comment model"""
