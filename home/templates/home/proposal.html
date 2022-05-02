@@ -41,7 +41,11 @@
       </div>
       <div class="col-6">
   {% if proposal.source %}
+    {% if sourcelink %}
         Source: <a href="{{ sourcelink }}">{{ proposal.source.siglum }}, {{ proposal.sourcepage }}</a><br><br>
+    {% else %}
+        Source: {{ proposal.source.siglum }}, {{ proposal.sourcepage }}<br><br>
+    {% endif %}
   {% else %}
         No source<br><br>
   {% endif %}

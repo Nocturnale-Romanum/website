@@ -38,7 +38,7 @@ class HomePage(Page):
 class Source(models.Model):
     siglum = models.CharField(max_length=100, blank=False)
     # should be of the form http://baseurl.../.../{}/..." where {} will be replaced with the folio number
-    urlpattern = models.CharField(max_length=200, blank=False)
+    urlpattern = models.CharField(max_length=200, blank=True)
     def __str__(self):
       return self.siglum
 
@@ -95,7 +95,7 @@ class Proposal(models.Model):
     def makepng(self):
       os.system("./tex_build/build.py "+os.path.join(gabcFolder, self.filename())+" "+pngFolder+" &")
     def sourceurl(self):
-      if self.source:
+      if (self.source and self.source.urlpattern):
         return self.source.urlpattern.format(self.sourcepage)
       else:
         return ""

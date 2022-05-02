@@ -38,9 +38,11 @@ Submitted by : {{ selected.proposal.submitter }}
     <a href="{{ selected.gabc }}"><button type="button" class="btn btn-outline-primary me-2">Download GABC</button></a><br><br>
 
   {% if selected.source %}
-
-    Source: <a href="{{ selected.sourcelink }}">{{ selected.proposal.source.siglum }}, {{ selected.proposal.sourcepage }}</a><br><br>
-
+    {% if selected.sourcelink %}
+      Source: <a href="{{ selected.sourcelink }}">{{ selected.proposal.source.siglum }}, {{ selected.proposal.sourcepage }}</a><br><br>
+    {% else %}
+      Source: {{ selected.proposal.source.siglum }}, {{ selected.proposal.sourcepage }}<br><br>
+    {% endif %}
   {% else %}
 
     No source<br><br>
@@ -98,9 +100,11 @@ Submitted by : {{ selected.proposal.submitter }}
     <a href="{{ userproposal.gabc }}"><button type="button" class="btn btn-outline-primary me-2">Download GABC</button></a><br><br>
 
     {% if userproposal.proposal.source %}
-
-    Source: <a href="{{ userproposal.sourcelink }}">{{ userproposal.proposal.source.siglum }}, {{ userproposal.proposal.sourcepage }}</a><br><br>
-
+      {% if userproposal.sourcelink %}
+        Source: <a href="{{ userproposal.sourcelink }}">{{ userproposal.proposal.source.siglum }}, {{ userproposal.proposal.sourcepage }}</a><br><br>
+      {% else %}
+        Source: {{ userproposal.proposal.source.siglum }}, {{ userproposal.proposal.sourcepage }}<br><br>
+      {% endif %}
     {% else %}
 
     No source<br><br>
@@ -168,9 +172,11 @@ Submitted by : {{ selected.proposal.submitter }}
     <a href="{{ data.gabc }}"><button type="button" class="btn btn-outline-primary me-2">Download GABC</button></a><br><br>
 
   {% if data.proposal.source %}
-
-    Source: <a href="{{ data.sourcelink }}">{{ data.proposal.source.siglum }}, {{ data.proposal.sourcepage }}</a><br><br>
-
+    {% if data.sourcelink %}
+      Source: <a href="{{ data.sourcelink }}">{{ data.proposal.source.siglum }}, {{ data.proposal.sourcepage }}</a><br><br>
+    {% else %}
+      Source: {{ data.proposal.source.siglum }}, {{ data.proposal.sourcepage }}<br><br>
+    {% endif %}
   {% else %}
 
     No source<br><br>
