@@ -36,7 +36,11 @@
       <div class="col-6">
         Submitter: {{ proposal.submitter.username }}<br><br>
   {% if request.user.is_authenticated %}
+    {% if request.user == proposal.submitter %}
+        <a href="/edit_proposal/{{ chant.code }}"><button type="button" class="btn btn-outline-primary me-2">Edit my proposal</button></a><br><br>
+    {% else %}
         <a href="/edit_proposal/{{ chant.code }}/{{ proposal.submitter }}"><button type="button" class="btn btn-outline-primary me-2">Clone this proposal into mine</button></a><br><br>
+    {% endif%}
   {% endif %}
       </div>
       <div class="col-6">
