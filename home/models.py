@@ -1,4 +1,4 @@
-import os
+import os, shutil, sys
 from datetime import datetime
 
 from django.db import models
@@ -92,6 +92,16 @@ class Proposal(models.Model):
       f.write("%%\n")
       f.write(gabc+"\n")
       f.close()
+    def select(self, commitmsg=None):
+      fpath = self.filepath()
+      new_fpath = os.path.join(gabcFolder, self.chant.code + ".gabc")
+      shutil.copyfile(fpath, new_fpath)
+      if not commitmsg:
+        commitmsg = "'{} was selected from the command line.'".format(self.chant.code)
+      try:
+        os.system("cd nocturnale/static && git add gabc && git commit -m {} && git fetch && git rebase origin/main && git push".format(commitmsg))
+      except:
+        pass
     def makepng(self):
       os.system("./tex_build/build.py "+os.path.join(gabcFolder, self.filename())+" "+pngFolder+" &")
     def sourceurl(self):

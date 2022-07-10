@@ -190,6 +190,7 @@ def proposal(request, hcode, submitter):
     form = CommentForm()
     context = {
       'chantURLprefix': chantURLprefix,
+      'feastURLprefix': feastURLprefix,
       'proposal': p,
       'imglink': p.imgurl(),
       'gabc': p.gabcurl(),
@@ -205,3 +206,15 @@ def proposal(request, hcode, submitter):
       c = Comment(proposal = p, text = text, author = request.user)
       c.save()
     return redirect("/"+proposalURLprefix+"/"+hcode+"/"+submitter+"/")
+
+def select(request, hcode, submitter):
+  if not request.user.is_staff:
+    return redirect("/"+chantURLprefix+"/"+hcode)
+  c = get_object_or_404(Chant, code=hcode)
+  p = get_object_or_404(Proposal, chant=c, submitter__username=submitter)
+  c.selected_proposal = p
+  c.status = "SELECTED"
+  c.save()
+  commitmsg = "{} selected {}'s proposal for {}".format(request.user.username, submitter, hcode)
+  p.select(commitmsg=shlex.quote(commitmsg)) # this makes p copy its file hcode_submitter.gabc into hcode.gabc and commit that change
+  return redirect("/"+chantURLprefix+"/"+hcode)
