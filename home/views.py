@@ -35,12 +35,15 @@ def contents(request):
   }
   return HttpResponse(template.render(context, request))
 
-def index(request):
+def index(request, opart=""):
   """Passes to a template the list of chants, ordered by incipit.
   Spaces count in the order, which might be bad.
   This view should be optimized because it needs a long time to render."""
   template = loader.get_template('home/index.html')
-  chants = Chant.objects.order_by('incipit')
+  if opart not in ['an', 're', 'in', 'hy', 'or', 'ps']:
+    chants = Chant.objects.order_by('incipit')
+  else:
+    chants = Chant.objects.filter(office_part = opart).order_by('incipit')
   context = {
     'chantURLprefix' : chantURLprefix,
     'feastURLprefix' : feastURLprefix,

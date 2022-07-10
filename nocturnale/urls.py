@@ -24,6 +24,7 @@ urlpatterns = [
     path('contents/', home_views.contents),
     path('feast/<slug:fcode>/', home_views.feast),
     path('chant/<slug:hcode>/', home_views.chant),
+    path('index/<slug:opart>/', home_views.index),
     path('index/', home_views.index),
     path('edit_proposal/<slug:hcode>/', home_views.edit_proposal),
     path('edit_proposal/<slug:hcode>/<slug:cloned>/', home_views.edit_proposal),
