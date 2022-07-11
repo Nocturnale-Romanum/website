@@ -37,7 +37,7 @@ Submitted by : {{ selected.proposal.submitter }}
   {% endif %}
     <a href="{{ selected.gabc }}"><button type="button" class="btn btn-outline-primary me-2">Download GABC</button></a><br><br>
 
-  {% if selected.source %}
+  {% if selected.proposal.source %}
     {% if selected.sourcelink %}
       Source: <a href="{{ selected.sourcelink }}">{{ selected.proposal.source.siglum }}, {{ selected.proposal.sourcepage }}</a><br><br>
     {% else %}
