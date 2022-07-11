@@ -127,6 +127,7 @@ class Proposal(models.Model):
         diff = None
       return (gabc, mode, diff)
     def update(self, gabc=None, mode=None, differentia=None, commitmsg=None):
+      """General-purpose method for updating an existing proposal. Called with all params upon creation, may be called with less params, in which case current params from the proposal file will be reused."""
       (old_gabc, old_mode, old_diff) = self.gabc_mode_diff()
       if not gabc:
         gabc = old_gabc
@@ -134,9 +135,15 @@ class Proposal(models.Model):
         mode = old_mode
       if not differentia:
         differentia = old_diff
+      # if no commit message was provided (e.g. by view edit_proposal) a default one is made
       if not commitmsg:
         commitmsg = self.chant.code + " by " + self.submitter + " was updated from the command line."
       self.makefile(gabc, mode, differentia)
+      # if the proposal was selected, it must be unselected.
+      if self.chant.selected_proposal == self:
+        self.chant.selected_proposal = None
+        self.chant.status = "POPULATED"
+        self.chant.save()
       try:
         os.system("cd nocturnale/static && git add gabc && git commit -m {} && git fetch && git rebase origin/main && git push".format(commitmsg))
       except:
