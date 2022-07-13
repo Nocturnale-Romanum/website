@@ -26,7 +26,6 @@ def build(filepath, img_path):
   fin.close()
   fout.close()
   os.system("cd {} && lualatex --interaction=nonstopmode {}".format(build_dir, texfile))
-  os.system("cd {} && lualatex --interaction=nonstopmode {}".format(build_dir, texfile))
   os.system("cd {} && pdfcrop {}.pdf {}_cropped.pdf".format(build_dir, basename, basename))
   images = convert_from_path(os.path.join(build_dir, basename+'_cropped.pdf'), dpi=600)
   image = images[0]
