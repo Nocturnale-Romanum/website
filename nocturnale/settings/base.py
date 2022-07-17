@@ -104,6 +104,7 @@ WSGI_APPLICATION = 'nocturnale.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
+        'CONN_MAX_AGE': 3600,
         'OPTIONS': {
              'read_default_file': 'nocturnale/settings/mysql.conf',
         },
