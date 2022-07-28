@@ -175,7 +175,10 @@ def edit_proposal(request, hcode, cloned=""):
     comment = Comment(proposal = proposal, text = commentmsg, author = request.user)
     comment.save()
     commitmsg = "{} edited {}: {}".format(request.user.username, chant.code, commentmsg)
-    proposal.update(gabc=request.POST.get('gabc'), mode=request.POST.get('mode'), differentia=request.POST.get('differentia'), commitmsg=shlex.quote(commitmsg))
+    gabc = request.POST.get('gabc')
+    mode = request.POST.get('mode')
+    differentia=request.POST.get('diff')
+    proposal.update(gabc=gabc, mode=mode, differentia=differentia, commitmsg=shlex.quote(commitmsg))
     return redirect("/"+chantURLprefix+"/"+hcode+"/")
 
 def proposal(request, hcode, submitter):
