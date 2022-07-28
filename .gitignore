@@ -28,4 +28,5 @@ tex_build/*.tex
 *.gaux
 *.log
 *.glog
+*.idx
 log
