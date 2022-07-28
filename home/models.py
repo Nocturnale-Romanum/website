@@ -110,22 +110,7 @@ class Proposal(models.Model):
       else:
         return ""
     def gabc_mode_diff(self):
-      try:
-        f = open(self.filepath()).read().split("%%")
-      except:
-        return (None, None, None)
-      header = f[0].strip()
-      gabc = "%%".join(f[1:]).strip()
-      modediff = header.split("mode:")[1].split(";")[0].strip()
-      try:
-        mode = modediff[0]
-      except:
-        mode = None
-      try:
-        diff = modediff[1:]
-      except:
-        diff = None
-      return (gabc, mode, diff)
+      return parse_gabc_file(self.filepath())
     def update(self, gabc=None, mode=None, differentia=None, commitmsg=None):
       """General-purpose method for updating an existing proposal. Called with all params upon creation, may be called with less params, in which case current params from the proposal file will be reused."""
       (old_gabc, old_mode, old_diff) = self.gabc_mode_diff()
@@ -211,3 +196,20 @@ class Comment(models.Model):
     text = models.CharField(max_length=2000, null=False, blank=False)
     proposal = models.ForeignKey("Proposal", related_name="comments", null=False, on_delete=models.CASCADE)
 
+def parse_gabc_file(filepath):
+  try:
+    f = open(filepath).read().split("%%")
+  except:
+    return (None, None, None)
+  header = f[0].strip()
+  gabc = "%%".join(f[1:]).strip()
+  modediff = header.split("mode:")[1].split(";")[0].strip()
+  try:
+    mode = modediff[0]
+  except:
+    mode = None
+  try:
+    diff = modediff[1:]
+  except:
+    diff = None
+  return (gabc, mode, diff)
