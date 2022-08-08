@@ -30,6 +30,6 @@ def build(filepath, img_path):
   images = convert_from_path(os.path.join(build_dir, basename+'_cropped.pdf'), dpi=600)
   image = images[0]
   image.save(imgfilepath, "PNG")
-  os.system("cd {} && rm {}.*".format(build_dir, basename))
+  os.system("cd {} && rm -f {}*".format(build_dir, basename))
 
 build(sys.argv[1], sys.argv[2])
