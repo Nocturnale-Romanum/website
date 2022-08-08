@@ -19,10 +19,6 @@ nocturnale/static/*.pdf
 nocturnale/static/README.md
 nocturnale/static/LICENSE
 nocturnale/static/*.txt
-tex_build/*.png
-tex_build/*.gabc
-tex_build/*.pdf
-tex_build/*.tex
 *.gtex
 *.aux
 *.gaux
