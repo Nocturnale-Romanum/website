@@ -39,17 +39,17 @@ Alphabetical indices : <a href=/{{ indexURLprefix }}/>All chants</a> |
 
 {% endfor %}
 
-  <h2>Proprium Sanctorum</h2>
+  <h2>Communia</h2>
 
-{% for feast in sanctisFeasts %}
+{% for feast in communiaFeasts %}
 
     <a href=/{{ feastURLprefix }}/{{ feast.code }}/>{% if feast.day %}{{ feast.day }} : {% endif %}{{ feast.title }}</a><br>
 
 {% endfor %}
 
-  <h2>Communia</h2>
+  <h2>Proprium Sanctorum</h2>
 
-{% for feast in communiaFeasts %}
+{% for feast in sanctisFeasts %}
 
     <a href=/{{ feastURLprefix }}/{{ feast.code }}/>{% if feast.day %}{{ feast.day }} : {% endif %}{{ feast.title }}</a><br>
 
