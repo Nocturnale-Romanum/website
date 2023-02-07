@@ -1,8 +1,10 @@
 from .models import *
 from .forms import *
+from .util import *
 
 import os
 import shlex
+from time import time
 
 from django.http import HttpResponse
 from django.template import loader
@@ -221,3 +223,29 @@ def select(request, hcode, submitter):
   commitmsg = "{} selected {}'s proposal for {}".format(request.user.username, submitter, hcode)
   p.select(commitmsg=shlex.quote(commitmsg)) # this makes p copy its file hcode_submitter.gabc into hcode.gabc and commit that change
   return redirect("/"+chantURLprefix+"/"+hcode)
+
+def tooling(request):
+  template = loader.get_template('home/tooling.html')
+  if request.method == "GET":
+    form = ToolingForm()
+    answer = ""
+  if request.method == "POST":
+    mode = request.POST.get("mode")
+    text = request.POST.get("input")
+    form = ToolingForm(initial = {"mode":mode, "input":text})
+    filename = str(int(time()*1000))
+    f=open(filename, "w")
+    f.write(text)
+    f.close()
+    os.system("./hyphen-la/scripts/syllabify.py -t chant -m liturgical -c - -e -i {} -o {}_out".format(filename, filename))
+    f=open(filename+"_out")
+    answer = f.read()
+    answer = versify(answer, mode)
+    f.close()
+    os.remove(filename)
+    os.remove(filename+"_out")
+  context = {
+    'form':form,
+    'answer':answer,
+  }
+  return HttpResponse(template.render(context, request))

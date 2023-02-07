@@ -19,4 +19,9 @@ def impersonate(username, chantcode, gabc, source, sourcepage, mode, differentia
   r.POST["comment"] = comment
   edit_proposal(r, chantcode)
 
+def impersonate_file(username, chantcode, source, sourcepage, comment, filepath):
+  (gabc, mode, diff) = parse_gabc_file(filepath)
+  impersonate(username, chantcode, gabc, source, sourcepage, mode, diff, comment)
 
+def versify(hyphenatedText, mode):
+  return hyphenatedText

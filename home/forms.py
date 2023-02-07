@@ -46,3 +46,16 @@ class ProposalEditForm(forms.Form):
 
 class CommentForm(forms.Form):
   comment = forms.CharField(label='Add comment:', widget=forms.Textarea(attrs={'rows':8}), required=True)
+
+class ToolingForm(forms.Form):
+  mode = forms.ChoiceField(choices = [
+    ('1','1'),
+    ('2','2'),
+    ('3','3'),
+    ('4','4'),
+    ('5','5'),
+    ('6','6'),
+    ('7','7'),
+    ('8','8'),
+  ], required=True)
+  input = forms.CharField(label='Text to versify', widget=forms.Textarea(attrs={'rows':8}), required=True)
