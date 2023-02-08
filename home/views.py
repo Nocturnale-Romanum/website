@@ -237,7 +237,7 @@ def tooling(request):
     f=open(filename, "w")
     f.write(text)
     f.close()
-    os.system("./hyphen-la/scripts/syllabify.py -t chant -m liturgical -c - -e -i {} -o {}_out".format(filename, filename))
+    os.system("./hyphen-la/scripts/syllabify.py -t chant -m liturgical -c - -i {} -o {}_out".format(filename, filename))
     f=open(filename+"_out")
     answer = f.read()
     answer = versify(answer, mode)
