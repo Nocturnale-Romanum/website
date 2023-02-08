@@ -23,9 +23,6 @@ def impersonate_file(username, chantcode, source, sourcepage, comment, filepath)
   (gabc, mode, diff) = parse_gabc_file(filepath)
   impersonate(username, chantcode, gabc, source, sourcepage, mode, diff, comment)
 
-    
-hyphenatedText = "Pro-du-xít-que Dó-mi-nus De-us de hu-mo om-ne li-gnum pul-chrum vi-su, * et ad ve-scén-dum su-á-ve ; li-gnum ét-i-am vi-tæ in mé-di-o pa-ra-dí-si. "
-
 vowels = ['a', 'e', 'i', 'o', 'u', 'y', 'æ', 'œ', 'ë']
 accentedvowels = ['á', 'é', 'í', 'ó', 'ú', 'ý', 'ǽ']
 upvowels = [x.upper() for x in vowels]
@@ -90,22 +87,24 @@ mode_patterns = {'1':mode1Rverserules,
 }
 
 def versify(hyphenatedText, mode):
-  parts = hyphenatedText.split("*")
+  parts = hyphenatedText.strip().split("*")
   result = apply_pattern(parts[0], mode_patterns[mode][0])
   if len(parts) == 1:
-    return result
+    return result + ' (::)'
   else:
     for x in parts[1:-1]:
+      result += ' (;) '
       result += apply_pattern(x, mode_patterns[mode][1])
+    result += ' (;) '
     result += apply_pattern(parts[-1], mode_patterns[mode][2])
-    return result
+    return result + ' (::)'
 
 def is_word(word):
   for x in vowels+accentedvowels+upvowels+upaccentedvowels:
     if x in word:
       return True
   return False
-  
+
 def has_accent(word):
   for x in accentedvowels+upaccentedvowels:
     if x in word:
@@ -133,7 +132,7 @@ def apply_pattern(hyphenatedText, pattern):
     gabc = [''.join([syllable['syllable']+'('+syllable['gabc']+')' for syllable in word]) for word in structuredGABC]
     gabc = ' '.join(gabc)
     return gabc
-    
+
 def apply_rule(structuredGABC, rule, value):
   flatStructuredGABC = [x for word in structuredGABC for x in word]
   if rule == "last":
