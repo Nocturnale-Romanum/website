@@ -57,5 +57,7 @@ class ToolingForm(forms.Form):
     ('6','6'),
     ('7','7'),
     ('8','8'),
-  ], required=True)
+  ], required=True, label='Mode')
+  rsigns = forms.BooleanField(label='Use rhythmic signs', initial = True)
+  neumes = forms.BooleanField(label='Use sangallian neumes', initial = True)
   input = forms.CharField(label='Text to versify', widget=forms.Textarea(attrs={'rows':8}), required=True)
