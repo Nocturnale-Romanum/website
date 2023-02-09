@@ -8,21 +8,31 @@
 {% block content %}
 
 <div class="row">
-<div class="col-sm-6">
 
   <h2>Versifier</h2>
 
 <form method="post">
   {% csrf_token %}
-      {{ form.mode|as_crispy_field }}
-	  {{ form.rsigns|as_crispy_field }}
-	  {{ form.neumes|as_crispy_field }}
-      {{ form.input|as_crispy_field }}
-  <button type="submit" class="btn btn-success">Versify</button>
+      <div class="row">
+        <div class="col-6">
+          {{ form.mode|as_crispy_field }}
+        </div>
+        <div class="col-6">
+          {{ form.rsigns|as_crispy_field }}
+          {{ form.neumes|as_crispy_field }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          {{ form.input|as_crispy_field }}
+          <button type="submit" class="btn btn-success">Versify</button>
+        </div>
 </form>
+        <div class="col-6">
+          <h4>Result</h4>
 
-  <h4>Result</h4>
-
-{{ answer }}
-
+          {{ answer }}
+        </div>
+      </div>
+</div>
 {% endblock content %}
