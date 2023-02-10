@@ -54,16 +54,24 @@ upvowels = [x.upper() for x in vowels]
 upaccentedvowels = [x.upper() for x in accentedvowels]
 
 ## available rules:
+## rules counting back from the end:
 # last, 2tolast, 3tolast, 4tolast, 5tolast
+## rules around last accent
 # lastAccent, fillerOnLastAccent, fillerAfterLastAccent
+## rules counting back from last accent
 # 1BeforeLastAccent, 2BeforeLastAccent, 3BeforeLastAccent
-# first, second
-# firstTrueAccent, firstWordLastSyllable, firstLongWordLastSyllable, firstSyllables
-# firstLongWordNextSyllable
+## rules counting from the beginning
+# first, second, firstIfMoreThan7, secondIfMoreThan7
+## rules around first accent
+# firstTrueAccent, firstDactylUltimate, firstDactylPenultimate, firstSpondaicUltimate
+## rules arount the first word
+# firstWordLastSyllable, firstLongWordLastSyllable, firstSyllables, firstLongWordNextSyllable
+## rules for filling the rest
 # otherTrueAccents, otherNotes
-# otherNotes is the recitation chord and must be given
+## otherNotes is the recitation chord and must be given
 
 mode1Rverserules = [[('firstLongWordLastSyllable', 'hg/hggof|clcl!pi', 'hg/hggof|clcl!pi'),
+        ('firstLongWordNextSyllable', 'gh|pe', 'gh~|pe~'),
         ('firstSyllables', 'h|vi', 'h|vi'),
         ('last', 'h.|ta-', 'h.|ta-'),
         ('2tolast', 'ixh/iioh|////ta/pr-', 'ixh/iioh|////ta/pr-'),
@@ -73,7 +81,16 @@ mode1Rverserules = [[('firstLongWordLastSyllable', 'hg/hggof|clcl!pi', 'hg/hggof
         ('3BeforeLastAccent', 'hf|cllsc3', 'hf~|cl~'),
         ('otherNotes', 'g', 'g'), 
 ],
-[       ('otherNotes', 'a', 'a')
+[       ('first', 'hf|cl', 'hf~|cl~'),
+        ('second', 'gh|pe', 'g@h>|pe>'),
+        ('last', 'h.|ta-', 'h.|ta-'),
+        ('2tolast', 'ixh/iioh|////ta/pr-', 'ixh/iioh|////ta/pr-'),
+        ('fillerOnLastAccent', 'h|ta', 'h|ta'),
+        ('1BeforeLastAccent', 'gh|pe', 'gh~|pe~'),
+        ('2BeforeLastAccent', 'gh|pe', 'gh~|pe~'),
+        ('3BeforeLastAccent', 'hf|cllsc3', 'hf~|cl~'),
+        ('otherTrueAccents', 'ixhi|pe', 'ixhi~|pe~'),
+        ('otherNotes', 'h', 'h'),
 ],
 [       ('last', 'gf..|cl-', 'gf..|cl-'),
         ('2tolast', 'hv_GF_Efwg_@hv|vi-su1sut2ql-vihj', 'hv_GF_Efwg_@h>|vi-su1sut2ql-vi>hj'),
@@ -91,12 +108,32 @@ mode2Rverserules = [[('otherNotes', 'a', 'a')
     ],
     [('otherNotes', 'a', 'a')
     ]]
-mode3Rverserules = [[('otherNotes', 'a', 'a')
+mode3Rverserules = [[('firstTrueAccent', 'ikjjs|tohhsthi', 'ikjjs|tohhsthi'),
+        ('firstSyllables', 'i|ta', 'i|ta'),
+        ('firstDactylPenultimate', 'h!iwji|qlhh!cl-hhppt1', 'h!iwji|qlhh!cl-hhppt1'), # todo version liquescente à établie par comparaison
+        ('firstDactylUltimate', 'hhog|prhh', 'hhog|prhh'),
+        ('firstSpondaicUltimate', 'h!iwji/hhog|ql!cl-ppt1prhh', 'h!iwji/hhog|ql!cl-ppt1prhh'),
+        ('last', 'ji..|cl-hh', 'ji..|cl-hh'),
+        ('2tolast', 'ikjjs|tohisthj', 'ikjjs|tohisthj'),
+        ('fillerOnLastAccent', 'i|ta', 'i|ta'),
+        ('1BeforeLastAccent', 'j|vihh', 'j|vihh'),
+        ('2BeforeLastAccent', 'h|vi', 'h|vi'),
+        ('3BeforeLastAccent', 'hg|cllsc3', 'hg~|cl~'),
+        ('otherTrueAccents', 'hi|pe', 'hi~|pe~'),
+        ('otherNotes', 'h|ta', 'h|ta')
     ],
     [('otherNotes', 'a', 'a')
     ],
-    [('otherNotes', 'a', 'a')
-    ]]
+    [   ('last', 'hg..|cl-', 'hg..|cl-'),
+        ('2tolast', 'jiioh/iv_HGh|////clhh!pihhci-hhvihi', 'jiioh/iv_HGh|////clhh!pihhci-hhvihi'),
+        ('3tolast', 'g_h!iwj|qlhhppt2', 'g_h!iwj|qlhhppt2'),
+        ('4tolast', 'hg|cllsc3', 'hg~|cl~'),
+        ('5tolast', 'ikjjvIH______/iwji|////toShivi-hjsut2qihk!cl-hk', 'ikjjvIH______/iwji|////toShivi-hjsut2qihk!cl-hk'),
+        ('firstIfMoreThan7', 'ig|cllsc3', 'ig~|cl~'),
+        ('secondIfMoreThan7', 'hi|pe', 'hi~|pe~'),
+        ('otherTrueAccents', 'i@jo|vslsc2', 'ij~|pe~'),
+        ('otherNotes', 'i|ta', 'i|ta'),    
+]]
 mode4Rverserules = [[('otherNotes', 'a', 'a')
     ],
     [('otherNotes', 'a', 'a')
@@ -152,16 +189,24 @@ def versify(hyphenatedText, mode, rsigns=True, neumes=True):
     return result + ' (::)'
 
 def is_word(word):
+  """takes a string and checks if it has a vowel, otherwise it will be discarded, e.g. <sp>*</sp>"""
   for x in vowels+accentedvowels+upvowels+upaccentedvowels:
     if x in word:
       return True
   return False
 
 def has_accent(word):
+  """takes a string (normally a syllable) and checks if it has an accented vowel, making it the accented syllable in its word"""
   for x in accentedvowels+upaccentedvowels:
     if x in word:
       return True
   return False
+  
+def isSpondaic(word):
+  """takes a structuredGABC element, which is a list of {'syllable':<str>, 'gabc':<str>, 'accent':<int>} forming a word, determines its termination nature"""
+  if len(word) < 2:
+    return False
+  return (word[-2]['accent'] == 1)
 
 def apply_pattern(hyphenatedText, pattern, rsigns, neumes):
     structuredGABC = hyphenatedText.split(" ")
@@ -275,19 +320,31 @@ def apply_rule(structuredGABC, rule, value, liqvalue, rsigns, neumes):
   elif rule == "firstWordLastSyllable":
   # this rule defines the last syllable of the first word, which can be a monosyllable and therefore the first syllable of the phrase
     structuredGABC[0][-1]['gabc'] = select_value(structuredGABC[0][-1]['syllable'], value, liqvalue, rsigns, neumes)
-  elif rule == "firstLongWordLastSyllable":
+  elif rule in ["firstLongWordLastSyllable", "firstLongWordNextSyllable"]:
   # this rule defines the last syllable of the first word, but avoids it being the first syllable of the phrase,
   # and if the phrase starts with three monosyllables, it will define the third.
     if len(structuredGABC[0]) == 1:
       if len(structuredGABC[1]) == 1:
         if len(structuredGABC[2]) == 1:
-          structuredGABC[2][0]['gabc'] = select_value(structuredGABC[2][0]['syllable'], value, liqvalue, rsigns, neumes)
+          if rule == "firstLongWordLastSyllable":
+            structuredGABC[2][0]['gabc'] = select_value(structuredGABC[2][0]['syllable'], value, liqvalue, rsigns, neumes)
+          elif rule == "firstLongWordNextSyllable":
+            structuredGABC[3][0]['gabc'] = select_value(structuredGABC[3][0]['syllable'], value, liqvalue, rsigns, neumes)
         else:
-          structuredGABC[1][0]['gabc'] = select_value(structuredGABC[1][0]['syllable'], value, liqvalue, rsigns, neumes)
+          if rule == "firstLongWordLastSyllable":
+            structuredGABC[1][0]['gabc'] = select_value(structuredGABC[1][0]['syllable'], value, liqvalue, rsigns, neumes)
+          elif rule == "firstLongWordNextSyllable":
+            structuredGABC[2][0]['gabc'] = select_value(structuredGABC[2][0]['syllable'], value, liqvalue, rsigns, neumes)
       else:
-        structuredGABC[1][-1]['gabc'] = select_value(structuredGABC[1][-1]['syllable'], value, liqvalue, rsigns, neumes)
+        if rule == "firstLongWordLastSyllable":
+          structuredGABC[1][-1]['gabc'] = select_value(structuredGABC[1][-1]['syllable'], value, liqvalue, rsigns, neumes)
+        elif rule == "firstLongWordNextSyllable":
+          structuredGABC[2][0]['gabc'] = select_value(structuredGABC[2][0]['syllable'], value, liqvalue, rsigns, neumes)
     else:
-      structuredGABC[0][-1]['gabc'] = select_value(structuredGABC[0][-1]['syllable'], value, liqvalue, rsigns, neumes)
+      if rule == "firstLongWordLastSyllable":
+        structuredGABC[0][-1]['gabc'] = select_value(structuredGABC[0][-1]['syllable'], value, liqvalue, rsigns, neumes)
+      elif rule == "firstLongWordNextSyllable":
+        structuredGABC[1][0]['gabc'] = select_value(structuredGABC[1][0]['syllable'], value, liqvalue, rsigns, neumes)
   elif rule == "firstSyllables":
   # this rule defines all the syllables up to the first one defined by a previous rule
     for syllable in flatStructuredGABC:
@@ -308,7 +365,33 @@ def apply_rule(structuredGABC, rule, value, liqvalue, rsigns, neumes):
   elif rule == "first":
   # this rule defines the first syllable
     flatStructuredGABC[0]['gabc'] = select_value(flatStructuredGABC[0]['syllable'], value, liqvalue, rsigns, neumes)
+  elif rule == "firstIfMoreThan7":
+  # this rule defines the first syllable only if there are going to be filler syllables between it and the 5-syllable ending
+    if len(flatStructuredGABC) > 7:
+      flatStructuredGABC[0]['gabc'] = select_value(flatStructuredGABC[0]['syllable'], value, liqvalue, rsigns, neumes)
   elif rule == "second":
   # this rule defines the second syllable
     flatStructuredGABC[1]['gabc'] = select_value(flatStructuredGABC[1]['syllable'], value, liqvalue, rsigns, neumes)
+  elif rule == "secondIfMoreThan7":
+  # this rule defines the second syllable
+    if len(flatStructuredGABC) > 7:
+      flatStructuredGABC[1]['gabc'] = select_value(flatStructuredGABC[1]['syllable'], value, liqvalue, rsigns, neumes)
+  elif rule in ["firstDactylUltimate", "firstDactylPenultimate", "firstSpondaicUltimate"]:
+    for word in structuredGABC:
+      if len(word) == 1:
+        pass
+      else: # word is either dactilyic or spondaic
+        if isSpondaic(word):
+          if rule == "firstSpondaicUltimate":
+            word[-1]['gabc'] = select_value(word[-1]['syllable'], value, liqvalue, rsigns, neumes)
+          else:
+            pass
+        else:
+          if rule == "firstDactylUltimate":
+            word[-1]['gabc'] = select_value(word[-1]['syllable'], value, liqvalue, rsigns, neumes)
+          elif rule == "firstDactylPenultimate":
+            word[-2]['gabc'] = select_value(word[-2]['syllable'], value, liqvalue, rsigns, neumes)
+          else:
+            pass
+        break
   return structuredGABC
