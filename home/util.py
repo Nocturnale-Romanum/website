@@ -132,7 +132,7 @@ mode3Rverserules = [[('firstTrueAccent', 'ikjjs|tohhsthi', 'ikjjs|tohhsthi'),
         ('firstIfMoreThan7', 'ig|cllsc3', 'ig~|cl~'),
         ('secondIfMoreThan7', 'hi|pe', 'hi~|pe~'),
         ('otherTrueAccents', 'i@jo|vslsc2', 'ij~|pe~'),
-        ('otherNotes', 'i|ta', 'i|ta'),    
+        ('otherNotes', 'i|ta', 'i|ta'),
 ]]
 mode4Rverserules = [[('otherNotes', 'a', 'a')
     ],
@@ -152,11 +152,32 @@ mode6Rverserules = [[('otherNotes', 'a', 'a')
     ],
     [('otherNotes', 'a', 'a')
     ]]
-mode7Rverserules = [[('otherNotes', 'a', 'a')
+mode7Rverserules = [[
+        ('firstTrueAccent', 'i!jwk_JI|vihiql-hnsu2', 'i!jwk_J~I~|vihiql-hnsux1'), # les neumes pour la liq. sont à vérifier par comparaison
+        ('firstDactylUltimate', 'h_i/hhog|peSpr', 'h_i/hhog~|peSvs>'),
+        ('firstDactylPenultimate', 'hg|cllsc2', 'hg~|cl~'),
+        ('firstSpondaicUltimate', 'h_i/hhog|peSpr', 'h_i/hhog~|peSvs>'),
+        ('firstSyllables', 'i|ta', 'i|ta'),
+        ('3BeforeLastAccent', 'ig|cllsc2', 'ig~|cl~'),
+        ('2BeforeLastAccent', 'hi|pe', 'hi~|pe~'),
+        ('1BeforeLastAccent', 'hi|pe', 'hi~|pe~'),
+        ('fillerOnLastAccent', 'i|ta', 'i|ta'),
+        ('last', 'ji..|cl-hh', 'ji..|cl-hh'),
+        ('2tolast', 'i!jwkj__|qlhk!cl-hkppt1', 'i!jwkj__|qlhk!cl-hkppt1'),
+        ('otherTrueAccents', 'hi|pe', 'hi~|pe~'),
+        ('otherNotes', 'h|ta', 'h|ta')
     ],
     [('otherNotes', 'a', 'a')
     ],
-    [('otherNotes', 'a', 'a')
+    [   ('last', 'iv_HGhg..|//ci-cl-hg', 'iv_HGhg..|//ci-cl-hg'),
+        ('2tolast', 'i_h!iwjij|////cl-hhqihi!pohi', 'i_h!iwjij|////cl-hhqihi!pohi'), # sancto n'a pas de liquescence indiquée, à voir aussi par comparaison
+        ('3tolast', 'h!iwji/jkj|////qlhi!clhippt1lsc3', 'h!iwji/jkj|////qlhi!clhippt1lsc3'),
+        ('4tolast', 'ih|cllsc3', 'ih|cllsc3'),
+        ('5tolast', 'ijij_IH|////tr-1su2', 'ijij_I~H~|////tr-1sux1'),
+        ('firstIfMoreThan7', 'h_i/hhog|peSpr', 'h_i/hhog~|peSvs>'),
+        ('secondIfMoreThan7', 'hih|//to', 'hih|//to'),
+        ('otherTrueAccents', 'ij|pe', 'ij~|pe~'),
+        ('otherNotes', 'i|vi', 'i|vi'),
     ]]
 mode8Rverserules = [[('otherNotes', 'a', 'a')
     ],
@@ -201,7 +222,7 @@ def has_accent(word):
     if x in word:
       return True
   return False
-  
+
 def isSpondaic(word):
   """takes a structuredGABC element, which is a list of {'syllable':<str>, 'gabc':<str>, 'accent':<int>} forming a word, determines its termination nature"""
   if len(word) < 2:
