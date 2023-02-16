@@ -55,6 +55,14 @@ Alphabetical indices : <a href=/{{ indexURLprefix }}/>All chants</a> |
 
 {% endfor %}
 
+  <h2>Appendix</h2>
+
+{% for feast in appendixFeasts %}
+
+    <a href=/{{ feastURLprefix }}/{{ feast.code }}/>{% if feast.day %}{{ feast.day }} : {% endif %}{{ feast.title }}</a><br>
+
+{% endfor %}
+
 </div>
 </div>
 

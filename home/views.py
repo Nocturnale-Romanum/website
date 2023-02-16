@@ -19,14 +19,15 @@ proposalURLprefix = "proposal"
 
 def contents(request):
   """Passes to a template the list of feasts that have at least one proper chant, in the order of the book.
-  100, 2350, 5290 are magic values of the 'order' field in the Feasts table, that correspond to the major titles :
+  100, 2350, 5290, 6000 are magic values of the 'order' field in the Feasts table, that correspond to the major titles :
   proper of seasons, of saints, and commons"""
   template = loader.get_template('home/contents.html')
   feasts = Feast.objects.filter(chants__isnull=False).distinct().order_by("order")
   ordinaryFeasts = [f for f in feasts if f.order < 100]
   temporeFeasts = [f for f in feasts if (f.order > 100 and f.order < 2350)]
   sanctisFeasts = [f for f in feasts if (f.order > 2350 and f.order < 5290)]
-  communiaFeasts = [f for f in feasts if (f.order > 5290)]
+  communiaFeasts = [f for f in feasts if (f.order > 5290 and f.order < 6000)]
+  appendixFeasts = [f for f in feasts if f.order > 6000]
   context = {
     'feastURLprefix' : feastURLprefix,
     'indexURLprefix' : indexURLprefix,
@@ -34,6 +35,7 @@ def contents(request):
     'temporeFeasts' : temporeFeasts,
     'sanctisFeasts' : sanctisFeasts,
     'communiaFeasts' : communiaFeasts,
+    'appendixFeasts' : appendixFeasts,
   }
   return HttpResponse(template.render(context, request))
 
