@@ -1,6 +1,8 @@
 import os, shutil, sys
 from datetime import datetime
 
+import shlex
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
@@ -122,7 +124,8 @@ class Proposal(models.Model):
         differentia = old_diff
       # if no commit message was provided (e.g. by view edit_proposal) a default one is made
       if not commitmsg:
-        commitmsg = self.chant.code + " by " + self.submitter + " was updated from the command line."
+        commitmsg = self.chant.code + " by " + self.submitter.username + " was updated from the command line."
+        commitmsg = shlex.quote(commitmsg)
       self.makefile(gabc, mode, differentia)
       # if the proposal was selected, it must be unselected.
       if self.chant.selected_proposal == self:
@@ -130,7 +133,7 @@ class Proposal(models.Model):
         self.chant.status = "POPULATED"
         self.chant.save()
       try:
-        os.system("cd nocturnale/static && git add gabc && git commit -m {} && git fetch && git rebase origin/main && git push".format(commitmsg))
+        os.system("cd nocturnale/static && git add gabc && git commit -m {} --author \"{} <{}@marteo.fr>\"&& git fetch && git rebase origin/main && git push".format(commitmsg, self.submitter.username, self.submitter.username))
       except:
         pass
       self.makepng()
