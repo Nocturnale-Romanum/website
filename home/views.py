@@ -226,6 +226,14 @@ def select(request, hcode, submitter):
   p.select(commitmsg=shlex.quote(commitmsg)) # this makes p copy its file hcode_submitter.gabc into hcode.gabc and commit that change
   return redirect("/"+chantURLprefix+"/"+hcode)
 
+def comment_delete(request, id):
+  comment = get_object_or_404(Comment, id=id)
+  hcode = comment.proposal.chant.code
+  proposal_submitter = comment.proposal.submitter.username
+  if (request.user.is_staff or request.user == comment.author):
+    comment.delete()
+  return redirect("/"+proposalURLprefix+"/"+hcode+"/"+proposal_submitter+"/")
+
 def tooling(request):
   template = loader.get_template('home/tooling.html')
   if request.method == "GET":

@@ -31,6 +31,7 @@ urlpatterns = [
     path('edit_proposal/<slug:hcode>/<slug:cloned>/', home_views.edit_proposal),
     path('proposal/<slug:hcode>/<slug:submitter>/', home_views.proposal),
     path('select/<slug:hcode>/<slug:submitter>/', home_views.select),
+    path('comment/<int:id>/delete/', home_views.comment_delete),
     path('robots.txt', TemplateView.as_view(template_name="robots.txt", content_type="text/plain") ),
 ]
 

@@ -69,7 +69,7 @@
         {{ comment.text }}
       </blockquote>
       <figcaption class="blockquote-footer">
-        {{ comment.author }} - <cite>{{ comment.date }}</cite>
+        {{ comment.author }} - <cite>{{ comment.date }}</cite> {% if comment.author == request.user or request.user.is_staff %}- <a href="/comment/{{ comment.id }}/delete/">delete</a> {% endif %}
       </figcaption>
     </figure>
 
