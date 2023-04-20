@@ -27,6 +27,16 @@ def remove_neumes_from_gabc_element(gabc_element):
   l = gabc_element.split('|')
   return '/'.join(l[::2]) # items 0, 2, 4... de l
   
+def make_user_defaultselect(username):
+  lc = Chant.objects.filter(status = "POPULATED")
+  for c in lc:
+    if set([p.submitter.username for p in c.proposals.all()]) == set([username, "sandhofe"]):
+      p = c.proposals.get(submitter__username=username)
+      fpath = p.filepath()
+      new_fpath = os.path.join(gabcFolder, c.code + ".gabc")
+      shutil.copyfile(fpath, new_fpath)
+
+
 def remove_rsigns_from_gabc_element(gabc_element):
   # this does what it says, however, it does not remove advancedly placed episemata like _[oh:h].
   # we will add support for those if needed.
