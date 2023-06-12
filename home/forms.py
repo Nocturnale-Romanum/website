@@ -33,6 +33,8 @@ class ProposalEditForm(forms.Form):
     ('d2','d2'),
     ('e','e'),
     ('f','f'),
+    ('f2', 'f2'),
+    ('f3', 'f3'),
     ('g','g'),
     ('g*','g*'),
     ('g2','g2'),
