@@ -168,19 +168,25 @@ def edit_proposal(request, hcode, cloned=""):
       proposal = Proposal(submitter = request.user, chant = chant)
     source_siglum = request.POST.get('source')
     sourcepage = request.POST.get('sourcepage')
+    nabc_status = request.POST.get('nabcstatus')
+    gabc = request.POST.get('gabc')
+    mode = request.POST.get('mode')
     try:
       source = Source.objects.get(siglum = source_siglum)
     except:
       source = None
     proposal.source = source
     proposal.sourcepage = sourcepage
+    if '|' not in gabc:
+        nabc_status = 'none'
+    elif nabc_status == 'none':
+        nabc_status = 'fake'
+    proposal.nabc_status = nabc_status
     proposal.save()
     commentmsg = request.POST.get('comment')
     comment = Comment(proposal = proposal, text = commentmsg, author = request.user)
     comment.save()
     commitmsg = "{} edited {}: {}".format(request.user.username, chant.code, commentmsg)
-    gabc = request.POST.get('gabc')
-    mode = request.POST.get('mode')
     differentia=request.POST.get('diff')
     proposal.update(gabc=gabc, mode=mode, differentia=differentia, commitmsg=shlex.quote(commitmsg))
     return redirect("/"+chantURLprefix+"/"+hcode+"/")

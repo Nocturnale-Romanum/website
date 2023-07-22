@@ -54,6 +54,7 @@ class Proposal(models.Model):
     # when a chant gets its first proposal, it should go from MISSING to POPULATED
     source = models.ForeignKey("Source", related_name="proposals", null=True, on_delete=models.SET_NULL)
     sourcepage = models.CharField(max_length=10, blank=True)
+    nabc_status = models.CharField(max_length=10, choices=[(x,x) for x in ["none", "auth", "fake"]], null=False, blank=False, default="none")
     def save(self, *args, **kwargs):
       if 'submitter' in kwargs:
         self.submitter = kwargs['submitter']

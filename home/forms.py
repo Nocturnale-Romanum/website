@@ -41,6 +41,11 @@ class ProposalEditForm(forms.Form):
     ('g3','g3'),
     ('a','a'),
   ], required=False)
+  nabcstatus = forms.ChoiceField(label="NABC status", choices = [
+    ('none', "No NABC"),
+    ('auth', "From a manuscript"),
+    ('fake', "Synthetic/Contrafactum"),
+  ], required=False)
   gabc = forms.CharField(label='GABC code', widget=forms.Textarea(attrs={'rows':18}) )
   source = forms.ChoiceField(choices = [('','')] + [ (source.siglum, source.siglum) for source in Source.objects.all().order_by('siglum') ], required=False)
   sourcepage = forms.CharField(label='Source page', required=False)
