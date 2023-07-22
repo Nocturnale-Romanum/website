@@ -91,7 +91,7 @@ Submitted by : {{ selected.proposal.submitter }}
 
 {% endif %}
 
-{% if not (request.user.is_authenticated and selected.proposal and (selected.proposal.submitter == request.user)) %}
+{% if not request.user.is_authenticated or not selected.proposal or selected.proposal.submitter != request.user %}
 <!-- This is so that the entire "my proposal" section be skipped if the selected proposal exists and is the user's proposal. -->
 
 <h4>My proposal :</h4>
