@@ -32,8 +32,10 @@ Submitted by : {{ selected.proposal.submitter }}
     <img src="{{ selected.link }}" class="img-fluid" alt="image build failed or ongoing">
   </div>
   <div class="col-md-4">
-  {% if request.user.is_authenticated %}
+  {% if request.user.is_authenticated and request.user != selected.proposal.submitter %}
     <a href="/edit_proposal/{{ chant.code }}/{{ selected.proposal.submitter }}/"><button type="button" class="btn btn-outline-primary me-2">Clone this proposal into mine</button></a>
+  {% elif request.user.is_authenticated and request.user == selected.proposal.submitter %}
+    <a href="/edit_proposal/{{ chant.code }}/"><button type="button" class="btn btn-outline-primary me-2">Edit my proposal</button></a>
   {% endif %}
     <a href="{{ selected.gabc }}"><button type="button" class="btn btn-outline-primary me-2">Download GABC</button></a><br><br>
 
@@ -88,6 +90,9 @@ Submitted by : {{ selected.proposal.submitter }}
 <div class="row"><div class="col-md-8 offset-md-2">
 
 {% endif %}
+
+{% if not (request.user.is_authenticated and selected.proposal and (selected.proposal.submitter == request.user)) %}
+<!-- This is so that the entire "my proposal" section be skipped if the selected proposal exists and is the user's proposal. -->
 
 <h4>My proposal :</h4>
 
@@ -168,6 +173,7 @@ Submitted by : {{ selected.proposal.submitter }}
 
 <a href="/login/"><button type="button" class="btn btn-outline-primary me-2">Log in to edit my proposal</button></a><br><br>
 
+{% endif %}
 {% endif %}
 
 <br><h4>Proposals :</h4>
