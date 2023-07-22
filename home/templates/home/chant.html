@@ -115,13 +115,13 @@ Submitted by : {{ selected.proposal.submitter }}
       {% else %}
         Source: {{ userproposal.proposal.source.siglum }}, {{ userproposal.proposal.sourcepage }}<br>
       {% endif %}
-	  {% if selected.proposal.nabc_status == "none" %}
-	    No NABC<br>
-	  {% elif selected.proposal.nabc_status == "fake" %}
-	    NABC is synthetic/contrafactum<br>
-	  {% elif selected.proposal.nabc_status == "auth" %}
-	    NABC transcribed from the source<br>
-	  {% endif %}
+      {% if userproposal.proposal.nabc_status == "none" %}
+        No NABC<br>
+      {% elif userproposal.proposal.nabc_status == "fake" %}
+        NABC is synthetic/contrafactum<br>
+      {% elif userproposal.proposal.nabc_status == "auth" %}
+        NABC transcribed from the source<br>
+      {% endif %}
 
     {% else %}
 
@@ -199,13 +199,13 @@ Submitted by : {{ selected.proposal.submitter }}
     {% else %}
       Source: {{ data.proposal.source.siglum }}, {{ data.proposal.sourcepage }}<br>
     {% endif %}
-	{% if selected.proposal.nabc_status == "none" %}
-	  No NABC<br>
-	{% elif selected.proposal.nabc_status == "fake" %}
-	  NABC is synthetic/contrafactum<br>
-	{% elif selected.proposal.nabc_status == "auth" %}
-	  NABC transcribed from the source<br>
-	{% endif %}
+    {% if data.proposal.nabc_status == "none" %}
+      No NABC<br>
+    {% elif data.proposal.nabc_status == "fake" %}
+      NABC is synthetic/contrafactum<br>
+    {% elif data.proposal.nabc_status == "auth" %}
+      NABC transcribed from the source<br>
+    {% endif %}
   {% else %}
 
     No source<br><br>
