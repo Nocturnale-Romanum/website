@@ -41,8 +41,15 @@ Submitted by : {{ selected.proposal.submitter }}
     {% if selected.sourcelink %}
       Source: <a href="{{ selected.sourcelink }}">{{ selected.proposal.source.siglum }}, {{ selected.proposal.sourcepage }}</a><br><br>
     {% else %}
-      Source: {{ selected.proposal.source.siglum }}, {{ selected.proposal.sourcepage }}<br><br>
-    {% endif %}
+      Source: {{ selected.proposal.source.siglum }}, {{ selected.proposal.sourcepage }}<br>
+	{% endif %}
+	{% if selected.proposal.nabc_status == "none" %}
+	  No NABC<br>
+	{% elif selected.proposal.nabc_status == "fake" %}
+	  NABC is synthetic/contrafactum<br>
+	{% elif selected.proposal.nabc_status == "auth" %}
+	  NABC transcribed from the source<br>
+	{% endif %}
   {% else %}
 
     No source<br><br>
@@ -106,8 +113,16 @@ Submitted by : {{ selected.proposal.submitter }}
       {% if userproposal.sourcelink %}
         Source: <a href="{{ userproposal.sourcelink }}">{{ userproposal.proposal.source.siglum }}, {{ userproposal.proposal.sourcepage }}</a><br><br>
       {% else %}
-        Source: {{ userproposal.proposal.source.siglum }}, {{ userproposal.proposal.sourcepage }}<br><br>
+        Source: {{ userproposal.proposal.source.siglum }}, {{ userproposal.proposal.sourcepage }}<br>
       {% endif %}
+	  {% if selected.proposal.nabc_status == "none" %}
+	    No NABC<br>
+	  {% elif selected.proposal.nabc_status == "fake" %}
+	    NABC is synthetic/contrafactum<br>
+	  {% elif selected.proposal.nabc_status == "auth" %}
+	    NABC transcribed from the source<br>
+	  {% endif %}
+
     {% else %}
 
     No source<br><br>
@@ -182,8 +197,15 @@ Submitted by : {{ selected.proposal.submitter }}
     {% if data.sourcelink %}
       Source: <a href="{{ data.sourcelink }}">{{ data.proposal.source.siglum }}, {{ data.proposal.sourcepage }}</a><br><br>
     {% else %}
-      Source: {{ data.proposal.source.siglum }}, {{ data.proposal.sourcepage }}<br><br>
+      Source: {{ data.proposal.source.siglum }}, {{ data.proposal.sourcepage }}<br>
     {% endif %}
+	{% if selected.proposal.nabc_status == "none" %}
+	  No NABC<br>
+	{% elif selected.proposal.nabc_status == "fake" %}
+	  NABC is synthetic/contrafactum<br>
+	{% elif selected.proposal.nabc_status == "auth" %}
+	  NABC transcribed from the source<br>
+	{% endif %}
   {% else %}
 
     No source<br><br>

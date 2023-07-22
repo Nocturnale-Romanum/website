@@ -34,7 +34,7 @@
     <div>
     <div class="row">
       <div class="col-6">
-        Submitter: {{ proposal.submitter.username }}<br><br>
+        Submitter: {{ proposal.submitter.username }}<br><br><br>
   {% if request.user.is_authenticated %}
     {% if request.user == proposal.submitter %}
         <a href="/edit_proposal/{{ chant.code }}"><button type="button" class="btn btn-outline-primary me-2">Edit my proposal</button></a><br><br>
@@ -48,8 +48,15 @@
     {% if sourcelink %}
         Source: <a href="{{ sourcelink }}">{{ proposal.source.siglum }}, {{ proposal.sourcepage }}</a><br><br>
     {% else %}
-        Source: {{ proposal.source.siglum }}, {{ proposal.sourcepage }}<br><br>
+        Source: {{ proposal.source.siglum }}, {{ proposal.sourcepage }}<br>
     {% endif %}
+	{% if selected.proposal.nabc_status == "none" %}
+	  No NABC<br>
+	{% elif selected.proposal.nabc_status == "fake" %}
+	  NABC is synthetic/contrafactum<br>
+	{% elif selected.proposal.nabc_status == "auth" %}
+	  NABC transcribed from the source<br>
+	{% endif %}
   {% else %}
         No source<br><br>
   {% endif %}
