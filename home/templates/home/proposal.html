@@ -98,7 +98,7 @@
 
   {% else %}
 
-<a href="/login/"><button type="button" class="btn btn-outline-primary me-2">Log in to add comments</button></a>
+<a href="/login/?next={{ request.path }}"><button type="button" class="btn btn-outline-primary me-2">Log in to add comments</button></a>
 
   {% endif %}
 

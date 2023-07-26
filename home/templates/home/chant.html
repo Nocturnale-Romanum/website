@@ -171,7 +171,7 @@ Submitted by : {{ selected.proposal.submitter }}
 
 {% else %}
 
-<a href="/login/"><button type="button" class="btn btn-outline-primary me-2">Log in to edit my proposal</button></a><br><br>
+<a href="/login/?next={{ request.path }}"><button type="button" class="btn btn-outline-primary me-2">Log in to edit my proposal</button></a><br><br>
 
 {% endif %}
 {% endif %}
