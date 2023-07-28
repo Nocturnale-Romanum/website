@@ -103,7 +103,7 @@ mode1Rverserules = [[('firstLongWordLastSyllable', 'hg/hggof|clcl!pi', 'hg/hggof
         ('otherNotes', 'h', 'h'),
 ],
 [       ('last', 'gf..|cl-', 'gf..|cl-'),
-        ('2tolast', 'hv_GF_Efwg_@hv|vi-su1sut2ql-vihj', 'hv_GF_Efwg_@h>|vi-su1sut2ql-vi>hj'),
+        ('2tolast', 'hv_GFE__fwg_@hv|vi-su1sut2ql-vihj', 'hv_GFE__fwg_@h>|vi-su1sut2ql-vi>hj'),
         ('3tolast', 'ixf!gwhg/hih|////ql!clppt1tohh', 'ixf!gwhg/hih|////ql!clppt1tohh'),
         ('4tolast', 'hf|cllsc3', 'hf~|cl~'),
         ('5tolast', 'hg/hg|pflsc2', 'hg/hg~|pf~lsc2'),
