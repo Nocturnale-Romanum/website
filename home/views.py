@@ -143,6 +143,7 @@ def edit_proposal(request, hcode, cloned=""):
     if proposalSet : # we found an existing proposal, from the request user, or another user that was passed
       proposal = proposalSet[0]
       (gabc, mode, diff) = proposal.gabc_mode_diff()
+      nabc_status = proposal.nabc_status
       try:
         source = proposal.source.siglum
       except:
@@ -154,7 +155,8 @@ def edit_proposal(request, hcode, cloned=""):
       diff = None
       source = None
       sourcepage = None
-    form = ProposalEditForm(initial = {'gabc': gabc, 'mode': mode, 'diff': diff, 'source': source, 'sourcepage': sourcepage})
+      nabc_status = "none"
+    form = ProposalEditForm(initial = {'gabc': gabc, 'mode': mode, 'diff': diff, 'source': source, 'sourcepage': sourcepage, 'nabcstatus': nabc_status})
     context = {
       'chantURLprefix' : chantURLprefix,
       'chant' : chant,
