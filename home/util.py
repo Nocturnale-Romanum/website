@@ -22,11 +22,11 @@ def impersonate(username, chantcode, gabc, source, sourcepage, mode, differentia
 def impersonate_file(username, chantcode, source, sourcepage, comment, filepath):
   (gabc, mode, diff) = parse_gabc_file(filepath)
   impersonate(username, chantcode, gabc, source, sourcepage, mode, diff, comment)
-  
+
 def remove_neumes_from_gabc_element(gabc_element):
   l = gabc_element.split('|')
   return '/'.join(l[::2]) # items 0, 2, 4... de l
-  
+
 def make_user_defaultselect(username):
   lc = Chant.objects.filter(status = "POPULATED")
   for c in lc:
@@ -35,7 +35,6 @@ def make_user_defaultselect(username):
       fpath = p.filepath()
       new_fpath = os.path.join(gabcFolder, c.code + ".gabc")
       shutil.copyfile(fpath, new_fpath)
-
 
 def remove_rsigns_from_gabc_element(gabc_element):
   # this does what it says, however, it does not remove advancedly placed episemata like _[oh:h].
@@ -57,6 +56,31 @@ def remove_rsigns_from_gabc_element(gabc_element):
       return ngabc[0] # the only element in ngabc, in fact
     else:
       return result_without_tail + '|' + ngabc[-1]
+
+def transpose(gabc_element, offset):
+  # this takes gabc in split form (that is, no lyrics or nabc, only gabc code, separated by spaces)
+  # and transposes it N lines lower or higher
+  # the clef is to be transposed separately by hand.
+  heights = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm']
+  inclheights = [x.upper() for x in heights]
+  if offset == 0:
+    return gabc_element
+  if offset < 0:
+    for x in heights[0:-offset]+inclheights[0:-offset]:
+    # check that, if we go down by e.g. 2, there is no a, b, A or B in the gabc input
+      if x in gabc_element:
+        raise ValueError
+  if offset > 0:
+    for x in heights[-offset:]+inclheights[-offset:]:
+    # check that, if we go up by e.g. 2, there is no l, m, L or M in the gabc input
+      if x in gabc_element:
+        raise ValueError
+  allheights = heights+inclheights
+  if offset > 0:
+    allheights.reverse() # we want to traverse the list starting with the highest values if we are offsetting up, starting with the lowest if we are offsetting down.
+  for (i,x) in enumerate(allheights):
+    gabc_element=gabc_element.replace(x, allheights[i-abs(offset)])
+  return gabc_element
 
 vowels = ['a', 'e', 'i', 'o', 'u', 'y', 'æ', 'œ', 'ë']
 accentedvowels = ['á', 'é', 'í', 'ó', 'ú', 'ý', 'ǽ']
