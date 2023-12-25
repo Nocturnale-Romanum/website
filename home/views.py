@@ -222,6 +222,25 @@ def proposal(request, hcode, submitter):
       c.save()
     return redirect("/"+proposalURLprefix+"/"+hcode+"/"+submitter+"/")
 
+def comment_edit(request, id):
+  comment = get_object_or_404(Comment, id=id)
+  redirect_url = "/"+proposalURLprefix+"/"+comment.proposal.chant.code+"/"+comment.proposal.submitter.username+"/"
+  if not request.user == comment.author:
+    return redirect(redirect_url)
+  if request.method == "GET":
+    template = loader.get_template('home/comment_edit.html')
+    form = CommentEditForm(initial= {'comment': comment.text})
+    context = {
+      'comment': comment,
+      'form': form,
+    }
+    return HttpResponse(template.render(context, request))
+  elif request.method == "POST":
+    text = request.POST.get("comment")
+    comment.text = text
+    comment.save()
+    return redirect(redirect_url)
+
 def select(request, hcode, submitter):
   if not request.user.is_staff:
     return redirect("/"+chantURLprefix+"/"+hcode)

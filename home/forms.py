@@ -54,6 +54,9 @@ class ProposalEditForm(forms.Form):
 class CommentForm(forms.Form):
   comment = forms.CharField(label='Add comment:', widget=forms.Textarea(attrs={'rows':8}), required=True)
 
+class CommentEditForm(forms.Form):
+  comment = forms.CharField(label='Edit comment:', widget=forms.Textarea(attrs={'rows':8}), required=True)
+
 class ToolingForm(forms.Form):
   mode = forms.ChoiceField(choices = [
     ('1','1'),
