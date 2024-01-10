@@ -22,7 +22,9 @@ urlpatterns = [
     path('search/', search_views.search, name='search'),
 
     path('contents/', home_views.contents),
-    path('tooling/', home_views.tooling),
+    path('versify/', home_views.versify),
+    path('transpose/', home_views.transpose),
+    path('removenabcheights/', home_views.removenabcheights),
     path('feast/<slug:fcode>/', home_views.feast),
     path('chant/<slug:hcode>/', home_views.chant),
     path('index/<slug:opart>/', home_views.index),

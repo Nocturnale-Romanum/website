@@ -36,6 +36,17 @@ def make_user_defaultselect(username):
       new_fpath = os.path.join(gabcFolder, c.code + ".gabc")
       shutil.copyfile(fpath, new_fpath)
 
+def remmove_heights_from_nabc_element(nabc_element):
+  # this removes instances of hX (X=a...n) from pure NABC code, as in scrib.io split mode code.
+  # beware, some glyphs do incorporate height information in the glyph definition: to!ciGhh
+  # BEWARE, this works only for SG glyphs, because Laon glyphs have stuff like <baseglyph>lsthls<otherLS>
+  # which contains "sthl" making it indistinguishable from a stropha height L, unless one parses completely the NABC which is just annoying to do.
+  s = "".join(nabc_element.split('hh')) # remove instances of 'hh' from the nabc string
+  l = s.split('h') # split the nabc string around where heights other than hh are (SG uses 'h' only for heights, unlike Laon)
+  l[0] = "_"+l[0] # this is necessary for the list comprehension below
+  l = [s[1:] for s in l] # we remove the first char of all members, e.g. the char that used to follow 'h'
+  return "".join(l) # we merge everything and return
+
 def remove_rsigns_from_gabc_element(gabc_element):
   # this does what it says, however, it does not remove advancedly placed episemata like _[oh:h].
   # we will add support for those if needed.
@@ -57,7 +68,7 @@ def remove_rsigns_from_gabc_element(gabc_element):
     else:
       return result_without_tail + '|' + ngabc[-1]
 
-def transpose(gabc_element, offset):
+def transpose_gabc(gabc_element, offset):
   # this takes gabc in split form (that is, no lyrics or nabc, only gabc code, separated by spaces)
   # and transposes it N lines lower or higher
   # the clef is to be transposed separately by hand.

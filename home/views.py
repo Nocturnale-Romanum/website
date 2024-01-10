@@ -261,17 +261,17 @@ def comment_delete(request, id):
     comment.delete()
   return redirect("/"+proposalURLprefix+"/"+hcode+"/"+proposal_submitter+"/")
 
-def tooling(request):
-  template = loader.get_template('home/tooling.html')
+def versify(request):
+  template = loader.get_template('home/versify.html')
   if request.method == "GET":
-    form = ToolingForm()
+    form = VersifyForm()
     answer = ""
   if request.method == "POST":
     mode = request.POST.get("mode")
     text = request.POST.get("input")
     rsigns = request.POST.get("rsigns")
     neumes = request.POST.get("neumes")
-    form = ToolingForm(initial = {"mode":mode, "input":text, "rsigns":rsigns, "neumes":neumes})
+    form = VersifyForm(initial = {"mode":mode, "input":text, "rsigns":rsigns, "neumes":neumes})
     filename = str(int(time()*1000))
     f=open(filename, "w")
     f.write(text)
@@ -288,3 +288,38 @@ def tooling(request):
     'answer':answer,
   }
   return HttpResponse(template.render(context, request))
+
+def transpose(request):
+  template = loader.get_template('home/transpose.html')
+  if request.method == "GET":
+    form = TransposeForm()
+    answer = ""
+  if request.method == "POST":
+    offset = request.POST.get("offset")
+    gabc = request.POST.get("gabc")
+    form = TransposeForm(initial = {"offset":offset, "gabc":gabc})
+    try:
+      answer = transpose_gabc(gabc, int(offset))
+    except ValueError:
+      answer = "ERROR: some notes were too high or too low to be transposed"
+  context = {
+    'form':form,
+    'answer':answer,
+  }
+  return HttpResponse(template.render(context, request))
+
+def removenabcheights(request):
+  template = loader.get_template('home/removenabcheights.html')
+  if request.method == "GET":
+    form = RemoveNabcHeightsForm()
+    answer = ""
+  if request.method == "POST":
+    nabc = request.POST.get("nabc")
+    form = RemoveNabcHeightsForm(initial = {"nabc":nabc})
+    answer = remmove_heights_from_nabc_element(nabc)
+  context = {
+    'form':form,
+    'answer':answer,
+  }
+  return HttpResponse(template.render(context, request))
+

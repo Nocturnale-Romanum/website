@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block body_class %}template-homepage{% endblock %}
+
+
+{% block content %}
+
+<div class="row">
+
+  <h2>NABC glyph height removal</h2>
+
+<form method="post">
+  {% csrf_token %}
+      <div class="row">
+        <div class="col-6">
+          Warning: this tool works only for St Gall neumes. If you wish this tool to be expanded for Laon neumes, call Matthias.
+          {{ form.nabc|as_crispy_field }}
+          <button type="submit" class="btn btn-success">Remove heights</button>
+        </div>
+</form>
+        <div class="col-6">
+          <h4>Result</h4>
+
+          {{ answer }}
+        </div>
+      </div>
+</div>
+{% endblock content %}

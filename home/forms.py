@@ -57,7 +57,7 @@ class CommentForm(forms.Form):
 class CommentEditForm(forms.Form):
   comment = forms.CharField(label='Edit comment:', widget=forms.Textarea(attrs={'rows':8}), required=True)
 
-class ToolingForm(forms.Form):
+class VersifyForm(forms.Form):
   mode = forms.ChoiceField(choices = [
     ('1','1'),
     ('2','2'),
@@ -71,3 +71,19 @@ class ToolingForm(forms.Form):
   rsigns = forms.BooleanField(label='Use rhythmic signs', initial = True, required=False)
   neumes = forms.BooleanField(label='Use sangallian neumes', initial = True, required=False)
   input = forms.CharField(label='Text to versify', widget=forms.Textarea(attrs={'rows':8}), required=False)
+
+class TransposeForm(forms.Form):
+  gabc = forms.CharField(label='GABC without text or NABC', widget=forms.Textarea(attrs={'rows':8}), required=False)
+  offset = forms.ChoiceField(label='Offset', choices = [
+    (1, '1'),
+    (2, '2'),
+    (3, '3'),
+    (4, '4'),
+    (-1, '-1'),
+    (-2, '-2'),
+    (-3, '-3'),
+    (-4, '-4'),
+  ], required=True)
+
+class RemoveNabcHeightsForm(forms.Form):
+  nabc = forms.CharField(label='NABC without text or GABC', widget=forms.Textarea(attrs={'rows':8}), required=False)
