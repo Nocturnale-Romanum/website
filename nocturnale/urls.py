@@ -25,6 +25,7 @@ urlpatterns = [
     path('versify/', home_views.versify),
     path('transpose/', home_views.transpose),
     path('removenabcheights/', home_views.removenabcheights),
+    path('removersigns/', home_views.removersigns),
     path('feast/<slug:fcode>/', home_views.feast),
     path('chant/<slug:hcode>/', home_views.chant),
     path('index/<slug:opart>/', home_views.index),

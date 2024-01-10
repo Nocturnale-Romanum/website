@@ -2,6 +2,7 @@ from .models import *
 from .views import *
 
 from django.http import HttpRequest
+from collections import deque
 
 def impersonate(username, chantcode, gabc, source, sourcepage, mode, differentia, comment):
   """Allows the server shell to send a proposal creation/update in the name of a specific user
@@ -67,6 +68,63 @@ def remove_rsigns_from_gabc_element(gabc_element):
       return ngabc[0] # the only element in ngabc, in fact
     else:
       return result_without_tail + '|' + ngabc[-1]
+
+def remove_rsigns_string(s):
+  ### this looks at each character in a string that should be GABC code (the body of a GABC file, without headers).
+  ### it attemps to deduce if this character is a rhythmic sign or information related to rhythmic signs.
+  ### if so, it drops it; if not, it keeps it for outputting.
+  s = deque(s)
+  between_pars = False
+  between_brackets_in_pars = False
+  out = ""
+  while(s):
+    cur_char = s.popleft()
+    if cur_char == '(':
+      if between_pars:
+        raise ValueError("Excess opening parentheses")
+      else:
+        between_pars = True
+        out += cur_char
+    elif cur_char == ')':
+      if not between_pars:
+        raise ValueError("Excess closing parentheses")
+      else:
+        between_pars = False
+        out += cur_char
+    elif cur_char == '[':
+      if between_pars:
+        if between_brackets_in_pars:
+          raise ValueError("Excess opening brackets in pars")
+        else:
+          between_brackets_in_pars = True
+      else:
+        out += cur_char
+    elif cur_char == ']':
+      if between_pars:
+        if not between_brackets_in_pars:
+          raise ValueError("Excess closing brackets in pars")
+        else:
+          between_brackets_in_pars = False
+      else:
+        out += cur_char
+    elif between_brackets_in_pars:
+      pass # we drop whatever is inside brackets themselves inside parentheses: those are rsigns positioning info.
+      ## beware, however: /[3] is equivalent to /// and will be lost when executing this algorithm!
+    elif not between_pars:
+      out += cur_char # we keep whatever is not inside parentheses
+    elif cur_char == ',':
+      out += cur_char
+      if s[0] == '_': # "(,_)" is an exceptional case where an underscore is not a rhythmic sign (in Solesmes sense)
+        # so we keep it
+        cur_char = s.popleft()
+        out += cur_char
+    elif cur_char in ["_", ".", "'"]: # then we want to drop not only the current char, but any numbers that come after it
+      while s[0] in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
+        s.popleft()
+    else:
+      out += cur_char
+  return out
+
 
 def transpose_gabc(gabc_element, offset):
   # this takes gabc in split form (that is, no lyrics or nabc, only gabc code, separated by spaces)

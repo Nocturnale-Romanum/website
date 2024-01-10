@@ -87,3 +87,7 @@ class TransposeForm(forms.Form):
 
 class RemoveNabcHeightsForm(forms.Form):
   nabc = forms.CharField(label='NABC without text or GABC', widget=forms.Textarea(attrs={'rows':8}), required=False)
+
+class RemoveRsignsForm(forms.Form):
+  gabc = forms.CharField(label='Full GABC (with text, with or without NABC)', widget=forms.Textarea(attrs={'rows':8}), required=False)
+

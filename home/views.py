@@ -323,3 +323,18 @@ def removenabcheights(request):
   }
   return HttpResponse(template.render(context, request))
 
+def removersigns(request):
+  template = loader.get_template('home/removersigns.html')
+  if request.method == "GET":
+    form = RemoveRsignsForm()
+    answer = ""
+  if request.method == "POST":
+    gabc = request.POST.get("gabc")
+    form = RemoveRsignsForm(initial = {"gabc":gabc})
+    answer = remove_rsigns_string(gabc)
+  context = {
+    'form':form,
+    'answer':answer,
+  }
+  return HttpResponse(template.render(context, request))
+
