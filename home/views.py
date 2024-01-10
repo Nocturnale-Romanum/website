@@ -316,7 +316,7 @@ def removenabcheights(request):
   if request.method == "POST":
     nabc = request.POST.get("nabc")
     form = RemoveNabcHeightsForm(initial = {"nabc":nabc})
-    answer = remmove_heights_from_nabc_element(nabc)
+    answer = remove_heights_from_nabc_element(nabc)
   context = {
     'form':form,
     'answer':answer,

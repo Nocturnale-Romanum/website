@@ -37,7 +37,7 @@ def make_user_defaultselect(username):
       new_fpath = os.path.join(gabcFolder, c.code + ".gabc")
       shutil.copyfile(fpath, new_fpath)
 
-def remmove_heights_from_nabc_element(nabc_element):
+def remove_heights_from_nabc_element(nabc_element):
   # this removes instances of hX (X=a...n) from pure NABC code, as in scrib.io split mode code.
   # beware, some glyphs do incorporate height information in the glyph definition: to!ciGhh
   # BEWARE, this works only for SG glyphs, because Laon glyphs have stuff like <baseglyph>lsthls<otherLS>
