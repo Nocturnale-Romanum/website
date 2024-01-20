@@ -46,7 +46,7 @@
       <div class="col-6">
   {% if proposal.source %}
     {% if sourcelink %}
-        Source: <a href="{{ sourcelink }}">{{ proposal.source.siglum }}, {{ proposal.sourcepage }}</a><br><br>
+        Source: <a href="{{ sourcelink }}">{{ proposal.source.siglum }}, {{ proposal.sourcepage }}</a><br>
     {% else %}
         Source: {{ proposal.source.siglum }}, {{ proposal.sourcepage }}<br>
     {% endif %}
@@ -62,7 +62,8 @@
   {% else %}
         No source<br><br>
   {% endif %}
-        <a href="{{ gabc }}"><button type="button" class="btn btn-outline-primary me-2">Download GABC</button></a><br><br>
+        <a href="{{ gabc_url }}"><button type="button" class="btn btn-outline-primary me-2">Download GABC</button></a>
+        <a href="https://scrib.io/#q={{ gabc_code }}" target="_blank"><button type="button" class="btn btn-outline-primary me-2">Open in scrib.io</button></a><br><br>
       </div>
     <div>
     <img src="{{ imglink }}" class="img-fluid" alt="image build failed or ongoing">

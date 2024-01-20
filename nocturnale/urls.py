@@ -22,7 +22,7 @@ urlpatterns = [
     path('search/', search_views.search, name='search'),
 
     path('contents/', home_views.contents),
-    path('versify/', home_views.versify),
+    path('versify/', home_views.versify_view),
     path('transpose/', home_views.transpose),
     path('removenabcheights/', home_views.removenabcheights),
     path('removersigns/', home_views.removersigns),

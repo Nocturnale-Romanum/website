@@ -2,6 +2,7 @@ import os, shutil, sys
 from datetime import datetime
 
 import shlex
+import urllib.parse
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -114,6 +115,8 @@ class Proposal(models.Model):
         return ""
     def gabc_mode_diff(self):
       return parse_gabc_file(self.filepath())
+    def url_encoded_gabc(self):
+      return urllib.parse.quote(self.gabc_mode_diff()[0])
     def update(self, gabc=None, mode=None, differentia=None, commitmsg=None):
       """General-purpose method for updating an existing proposal. Called with all params upon creation, may be called with less params, in which case current params from the proposal file will be reused."""
       (old_gabc, old_mode, old_diff) = self.gabc_mode_diff()

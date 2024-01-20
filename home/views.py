@@ -90,17 +90,20 @@ def chant(request, hcode):
     selected_source_url = selected.sourceurl()
     selected_img_path = selected.imgurl()
     selected_gabc_path = selected.gabcurl()
+    selected_gabc_code = selected.url_encoded_gabc()
     # select the last 3 comments, sorted in chronologic order
     selected_comments = list(selected.comments.order_by('date'))[-3:]
   else:
     selected_img_path = None
     selected_gabc_path = None
+    selected_gabc_code = None
     selected_source_url = None
     selected_comments = None
   if request.user.is_authenticated:
     try:
       userproposal = chant.proposals.get(submitter = request.user)
       userproposal_gabc_path = userproposal.gabcurl()
+      userproposal_gabc_code = userproposal.url_encoded_gabc()
       userproposal_img_path = userproposal.imgurl()
       userproposal_source_url = userproposal.sourceurl()
       # select the last 3 comments, sorted in chronologic order
@@ -110,20 +113,22 @@ def chant(request, hcode):
       userproposal = None
       userproposal_img_path = None
       userproposal_gabc_path = None
+      userproposal_gabc_code = None
       userproposal_source_url = None
       userproposal_comments = None
   else:
     userproposal = None
     userproposal_img_path = None
     userproposal_gabc_path = None
+    userproposal_gabc_code = None
     userproposal_source_url = None
     userproposal_comments = None
   context = {
     'feastURLprefix' : feastURLprefix,
     'chant' : chant,
-    'selected' : {'proposal': selected, 'link': selected_img_path, 'sourcelink': selected_source_url, 'comments': selected_comments, 'gabc': selected_gabc_path},
-    'userproposal' : {'proposal': userproposal, 'link': userproposal_img_path, 'sourcelink': userproposal_source_url, 'comments': userproposal_comments, 'gabc': userproposal_gabc_path},
-    'unselected' : [{'proposal': p, 'link': p.imgurl(), 'sourcelink': p.sourceurl(), 'comments': list(p.comments.order_by('date'))[-3:], 'gabc': p.gabcurl()} for p in unselected],
+    'selected' : {'proposal': selected, 'link': selected_img_path, 'sourcelink': selected_source_url, 'comments': selected_comments, 'gabc_url': selected_gabc_path, 'gabc_code': selected_gabc_code},
+    'userproposal' : {'proposal': userproposal, 'link': userproposal_img_path, 'sourcelink': userproposal_source_url, 'comments': userproposal_comments, 'gabc_url': userproposal_gabc_path, 'gabc_code': userproposal_gabc_code},
+    'unselected' : [{'proposal': p, 'link': p.imgurl(), 'sourcelink': p.sourceurl(), 'comments': list(p.comments.order_by('date'))[-3:], 'gabc_url': p.gabcurl(), 'gabc_code': p.url_encoded_gabc()} for p in unselected],
   }
   return HttpResponse(template.render(context, request))
 
@@ -208,7 +213,8 @@ def proposal(request, hcode, submitter):
       'feastURLprefix': feastURLprefix,
       'proposal': p,
       'imglink': p.imgurl(),
-      'gabc': p.gabcurl(),
+      'gabc_url': p.gabcurl(),
+      'gabc_code': p.url_encoded_gabc(),
       'comments': p.comments.order_by('date'),
       'sourcelink': sourcelink,
       'chant': c,
@@ -261,7 +267,7 @@ def comment_delete(request, id):
     comment.delete()
   return redirect("/"+proposalURLprefix+"/"+hcode+"/"+proposal_submitter+"/")
 
-def versify(request):
+def versify_view(request):
   template = loader.get_template('home/versify.html')
   if request.method == "GET":
     form = VersifyForm()
