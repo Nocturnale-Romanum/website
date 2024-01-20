@@ -44,6 +44,7 @@ class ProposalEditForm(forms.Form):
   nabcstatus = forms.ChoiceField(label="NABC status", choices = [
     ('none', "No NABC"),
     ('auth', "From a manuscript"),
+    ('arfv', "R. from a manuscript, V. synthetic"),
     ('fake', "Synthetic/Contrafactum"),
   ], required=False)
   gabc = forms.CharField(label='GABC code', widget=forms.Textarea(attrs={'rows':18}) )

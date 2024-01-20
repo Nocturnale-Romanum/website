@@ -54,6 +54,8 @@
 	  No NABC<br>
 	{% elif proposal.nabc_status == "fake" %}
 	  NABC is synthetic/contrafactum<br>
+        {% elif proposal.nabc_status == "arfv" %}
+          R. from the source, V. synthetic<br>
 	{% elif proposal.nabc_status == "auth" %}
 	  NABC transcribed from the source<br>
 	{% endif %}

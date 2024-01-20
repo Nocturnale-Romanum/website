@@ -47,6 +47,8 @@ Submitted by : {{ selected.proposal.submitter }}
 	{% endif %}
 	{% if selected.proposal.nabc_status == "none" %}
 	  No NABC<br>
+        {% elif proposal.nabc_status == "arfv" %}
+          R. from the source, V. synthetic<br>
 	{% elif selected.proposal.nabc_status == "fake" %}
 	  NABC is synthetic/contrafactum<br>
 	{% elif selected.proposal.nabc_status == "auth" %}
@@ -124,6 +126,8 @@ Submitted by : {{ selected.proposal.submitter }}
         No NABC<br>
       {% elif userproposal.proposal.nabc_status == "fake" %}
         NABC is synthetic/contrafactum<br>
+      {% elif proposal.nabc_status == "arfv" %}
+        R. from the source, V. synthetic<br>
       {% elif userproposal.proposal.nabc_status == "auth" %}
         NABC transcribed from the source<br>
       {% endif %}
@@ -209,6 +213,8 @@ Submitted by : {{ selected.proposal.submitter }}
       No NABC<br>
     {% elif data.proposal.nabc_status == "fake" %}
       NABC is synthetic/contrafactum<br>
+    {% elif proposal.nabc_status == "arfv" %}
+      R. from the source, V. synthetic<br>
     {% elif data.proposal.nabc_status == "auth" %}
       NABC transcribed from the source<br>
     {% endif %}
