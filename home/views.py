@@ -255,6 +255,10 @@ def select(request, hcode, submitter):
   c.selected_proposal = p
   c.status = "SELECTED"
   c.save()
+  f = c.feast
+  if set([cc.status for cc in f.chants.all()]) == {"SELECTED"}: # all chants of the relevant feast are now SELECTED
+    f.status = "SELECTED"
+    f.save()
   commitmsg = "{} selected {}'s proposal for {}".format(request.user.username, submitter, hcode)
   p.select(commitmsg=shlex.quote(commitmsg)) # this makes p copy its file hcode_submitter.gabc into hcode.gabc and commit that change
   return redirect("/"+chantURLprefix+"/"+hcode)

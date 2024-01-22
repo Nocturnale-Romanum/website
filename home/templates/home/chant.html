@@ -39,6 +39,12 @@ Submitted by : {{ selected.proposal.submitter }}
   {% endif %}
     <a href="{{ selected.gabc_url }}"><button type="button" class="btn btn-outline-primary me-2">Download GABC</button></a>
     <a href="https://scrib.io/#q={{ selected.gabc_code }}" target="_blank"><button type="button" class="btn btn-outline-primary me-2">Open in scrib.io</button></a><br><br>
+
+  {% if chant.status == "REVIEWED" %}
+    {% if request.user.is_staff %}
+      <a href="/select/{{ chant.code }}/{{ selected.proposal.submitter.username }}/"><button type="button" class="btn btn-outline-primary me-2">Confirm proposal</button></a><br><br>
+    {% endif %}
+  {% endif %}
   {% if selected.proposal.source %}
     {% if selected.sourcelink %}
       Source: <a href="{{ selected.sourcelink }}">{{ selected.proposal.source.siglum }}, {{ selected.proposal.sourcepage }}</a><br><br>

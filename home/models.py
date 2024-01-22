@@ -131,11 +131,14 @@ class Proposal(models.Model):
         commitmsg = self.chant.code + " by " + self.submitter.username + " was updated from the command line."
         commitmsg = shlex.quote(commitmsg)
       self.makefile(gabc, mode, differentia)
-      # if the proposal was selected, it must be unselected.
-      if self.chant.selected_proposal == self:
-        self.chant.selected_proposal = None
-        self.chant.status = "POPULATED"
+      # if the chant has a selected proposal, we keep it, but mark the chant as reviewed.
+      if self.chant.status == "SELECTED":
+        self.chant.status = "REVIEWED"
         self.chant.save()
+        f = self.chant.feast
+        if set([c.status for c in f.chants.all()]).issubset({"SELECTED", "REVIEWED"}):
+          f.status = "REVIEWED"
+          f.save()
       try:
         os.system("cd nocturnale/static && git add gabc && git commit -m {} --author \"{} <{}@marteo.fr>\"&& git fetch && git rebase origin/main && git push".format(commitmsg, self.submitter.username, self.submitter.username))
       except:
@@ -193,6 +196,7 @@ class Feast(models.Model):
     header = models.CharField(max_length = 200, null=True, blank=True)
     # 1 is for the most solemn occasions, 2 is for all feasts and sundays, 3 is normally for ferias.
     title_level = models.IntegerField(null=False, default=1)
+    status = models.CharField(max_length=10, choices=[(x,x) for x in ["DEFINITIVE", "REVIEWED", "SELECTED", "POPULATED", "MISSING"]], null=False, blank=False, default="MISSING")
     def __str__(self):
       return self.code
 
