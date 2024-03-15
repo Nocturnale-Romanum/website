@@ -3,6 +3,22 @@
 \input{common_headers}
 \geometry{paperheight=780mm}
 
+\renewcommand{\officepartannotation}[1]{%
+  \renewcommand{\result}{#1}%
+  \lookup{#1}{or}{}%
+  \lookup{#1}{hy}{Hymn.}%
+  \lookup{#1}{an}{Ant.N}%
+  \lookup{#1}{ps}{}%
+  \lookup{#1}{re}{Resp.N}%
+  \lookup{#1}{in}{Invit.}%
+  \result%
+}%
+
+\newcommand{\officepartannotationcapture}[1]{
+  \greannotation[c]{\hspace{-1.4mm}\hspace{\defaultannotationshift}\officepartannotation{#1}}
+}
+\gresetheadercapture{office-part}{officepartannotationcapture}{}
+
 \begin{document}
 
 \thispagestyle{empty}
