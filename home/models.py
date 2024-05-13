@@ -206,12 +206,16 @@ class Comment(models.Model):
     date = models.DateTimeField(default=datetime.now)
     text = models.CharField(max_length=2000, null=False, blank=False)
     proposal = models.ForeignKey("Proposal", related_name="comments", null=False, on_delete=models.CASCADE)
+    def __str__(self):
+      return self.author.username + " on " + str(self.proposal)
 
 class Notification(models.Model):
     """The notification a user receives when someone comments their proposal or replies to them"""
     is_read = models.BooleanField(default=False)
     comment = models.ForeignKey("Comment", related_name="notifications", null=False, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="notifications", null=False, on_delete=models.CASCADE)
+    def __str__(self):
+      return "to " + self.user.username + " about " + str(self.comment)
 
 def parse_gabc_file(filepath):
   try:
