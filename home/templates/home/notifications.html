@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body_class %}template-homepage{% endblock %}
+
+
+{% block content %}
+
+<div class="row">
+  <h2>Notifications</h2>
+</div>
+
+
+{% for n in notifs %}
+
+<div class="row">
+
+  <a href="/proposal/{{ n.comment.proposal.chant.code }}/{{ n.comment.proposal.submitter.username }}">
+{% if not n.is_read %}
+  <button type="button" class="btn btn-outline-danger">
+{% elif n.is_read %}
+  <button type="button" class="btn btn-outline-success">
+{% endif %}
+    {{ n.comment.author }} replied to your comment on {{ n.comment.proposal.chant.incipit }} as proposed by {{ n.comment.proposal.submitter }}
+  </button>
+  </a>
+
+</div>
+
+{% endfor %}
+
+{% endblock content %}

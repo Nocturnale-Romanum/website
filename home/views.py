@@ -220,12 +220,24 @@ def proposal(request, hcode, submitter):
       'chant': c,
       'form': form,
     }
+    ### we acquit any notifications that might have sent us there
+    if request.user.is_authenticated :
+      for n in request.user.notifications.filter(is_read=False).filter(comment__proposal=p):
+        n.is_read=True
+        n.save()
+    ### end of notification acquittal
     return HttpResponse(template.render(context, request))
   elif request.method == "POST":
     if request.user.is_authenticated :
       text = request.POST.get("comment")
       c = Comment(proposal = p, text = text, author = request.user)
       c.save()
+      ### we create notifications for all users who have previously commented on this proposal
+      notified_users = set([c.author for c in p.comments.all()])
+      notified_users.remove(request.user)
+      for u in notified_users:
+        n = Notification(user = u, comment = c)
+        n.save()
     return redirect("/"+proposalURLprefix+"/"+hcode+"/"+submitter+"/")
 
 def comment_edit(request, id):
@@ -270,6 +282,16 @@ def comment_delete(request, id):
   if (request.user.is_staff or request.user == comment.author):
     comment.delete()
   return redirect("/"+proposalURLprefix+"/"+hcode+"/"+proposal_submitter+"/")
+
+def notifications(request):
+  if not request.user.is_authenticated :
+    return redirect("/")
+  notifs = request.user.notifications.order_by('-comment__date')[:100]
+  context = {
+    'notifs': notifs
+  }
+  template = loader.get_template('home/notifications.html')
+  return HttpResponse(template.render(context, request))
 
 def versify_view(request):
   template = loader.get_template('home/versify.html')

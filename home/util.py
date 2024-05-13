@@ -4,6 +4,12 @@ from .views import *
 from django.http import HttpRequest
 from collections import deque
 
+def notif_context_processor(request):
+  if not request.user.is_authenticated:
+    return {'user_notifications':0}
+  else:
+    return {'user_notifications': request.user.notifications.filter(is_read=False).count()}
+
 def impersonate(username, chantcode, gabc, source, sourcepage, mode, differentia, comment):
   """Allows the server shell to send a proposal creation/update in the name of a specific user
   username, chantcode : self-explanatory.

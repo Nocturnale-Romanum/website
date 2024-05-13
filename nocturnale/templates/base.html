@@ -67,8 +67,16 @@
     
           <div class="col text-end">
 	{% if request.user.is_authenticated %}
-
             <b>{{ request.user.username }}</b>
+	    {% if user_notifications > 0 %}
+		<a href="/notifications/"><button type="button" class="btn btn-outline-danger">
+		  &#128276; {{ user_notifications }}
+		</button></a>
+            {% else %}
+		<a href="/notifications/"><button type="button" class="btn btn-outline-primary">
+		  &#128276;
+		</button></a>
+            {% endif %}
             <a href="/logout/">
               <button type="button" class="btn btn-outline-primary me-2">Logout</button>
             </a>

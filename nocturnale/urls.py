@@ -30,6 +30,7 @@ urlpatterns = [
     path('chant/<slug:hcode>/', home_views.chant),
     path('index/<slug:opart>/', home_views.index),
     path('index/', home_views.index),
+    path('notifications/', home_views.notifications),
     path('edit_proposal/<slug:hcode>/', home_views.edit_proposal),
     path('edit_proposal/<slug:hcode>/<slug:cloned>/', home_views.edit_proposal),
     path('proposal/<slug:hcode>/<slug:submitter>/', home_views.proposal),
