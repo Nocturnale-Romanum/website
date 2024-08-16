@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
 
     'crispy_forms',
+    'crispy_bootstrap4',
 
     'allauth',
     'allauth.account',
@@ -71,7 +72,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-
+    'allauth.account.middleware.AccountMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 ]
 

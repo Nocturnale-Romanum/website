@@ -1,4 +1,6 @@
 Django>=3.2,<3.3
+django-allauth
 wagtail>=2.15,<2.16
 pdf2image
 django-crispy-forms
+django-bootstrap4
