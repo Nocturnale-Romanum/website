@@ -525,3 +525,24 @@ def apply_rule(structuredGABC, rule, value, liqvalue, rsigns, neumes):
             pass
         break
   return structuredGABC
+
+def gabc_specialchar_profile(gabc):
+  splits = gabc.split("<sp>")
+  specials = [x.split("</sp>")[0] for x in splits[1:]]
+  return specials
+
+def check_proposals(proposal_set):
+  a_profile = ["*"]
+  r_profile = ["*", "+", "V/", "+"] # standard R/
+  rgp_profile = ["*", "+", "V/", "+", "V/", "+"] # R/ with Gloria Patri
+  rsp_profile = ["*", "+", "‡", "V/", "+", "V/", "‡"] # R/ with Gloria Patri and two altera pars
+  rps_profile = ["*", "+", "V/", "+", "R/"] # R/ ending a nocturn during passiontide
+  for p in proposal_set:
+    gabc, mode, diff = p.gabc_mode_diff()
+    profile = gabc_specialchar_profile(gabc)
+    if p.chant.office_part=="an" and not (profile == a_profile):
+      print(p)
+    if p.chant.office_part=="re" and not (profile in [r_profile, rgp_profile, rsp_profile, rps_profile]):
+      print(p)
+
+
