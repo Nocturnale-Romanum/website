@@ -18,6 +18,7 @@ class ProposalEditForm(forms.Form):
     ('D','D'),
     ('E','E'),
     ('P','T.pereg.'),
+    ('irreg.', 'irreg.'),
   ], required=False)
   diff = forms.ChoiceField(label='Differentia', choices = [
     ('',''),
