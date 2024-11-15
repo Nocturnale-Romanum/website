@@ -545,4 +545,66 @@ def check_proposals(proposal_set):
     if p.chant.office_part=="re" and not (profile in [r_profile, rgp_profile, rsp_profile, rps_profile]):
       print(p)
 
+def add_brackets_to_nabcsnippet(gabc):
+  """Takes some gabc, without headers, that has at least one nabc pipe '|' and put its nabc between brackets 'ob' 'cb' if it does not already have them"""
+  parts = gabc.split("|")
+  if parts[1][0:2] != "ob":
+    parts[1] = "ob"+parts[1]
+    lastnabc = parts[-1]
+    lastnabcparts = lastnabc.split(")")
+    lastnabcparts[0] = lastnabcparts[0]+"cb"
+    lastnabc = ")".join(lastnabcparts)
+    parts[-1] = lastnabc
+  gabc = "|".join(parts)
+  return gabc
 
+
+def nabc_bracket_autoadd(proposal_set):
+  """adds nabc brackets ob/cb to proposals, depending on their nabc_status. returns only the proposals for which the operation failed."""
+  modified = []
+  pathological = []
+  for p in proposal_set:
+    if p.nabc_status == "auth":
+      continue
+    if p.nabc_status == "fake":
+      try:
+        gabc, mode, diff = p.gabc_mode_diff()
+        gabc = add_brackets_to_nabcsnippet(gabc)
+        p.makefile(gabc, mode, diff)
+        modified.append(p)
+      except Exception as e:
+        pathological.append(p)
+    if p.nabc_status == "arfv":
+      try:
+        gabc, mode, diff = p.gabc_mode_diff()
+        verses = gabc.split("<sp>V/</sp>")
+        modified_verses = [verses[0]]
+        for v in verses[1:]:
+          verse_and_reprisal = v.split("(::)")
+          verse_and_reprisal[0] = add_brackets_to_nabcsnippet(verse_and_reprisal[0])
+          v = "(::)".join(verse_and_reprisal)
+          modified_verses.append(v)
+        gabc = "<sp>V/</sp>".join(modified_verses)
+        p.makefile(gabc, mode, diff)
+        modified.append(p)
+      except Exception as e:
+        pathological.append(p)
+  return(pathological)
+
+def sanctus_syllabification(proposal_set):
+  modified = []
+  pathological = []
+  suffixes = ["ctus(", "cta(", "ctum(", "ctam(", "cti(", "cto(", "ctas(", "ctos(", "ctis(", "ctorum(", "ctarum(", "cto.("]
+  for p in proposal_set:
+    gabc, mode, diff = p.gabc_mode_diff()
+    if gabc.count("San(") == 1 and sum([gabc.count(suffix) for suffix in suffixes]) == 1 : # there is one "San" in the piece and one of the "ct*" suffixes, so no doubt that this is the word we are looking for
+      gabc = gabc.replace("San(", "Sanc(")
+      for suffix in suffixes:
+        gabc = gabc.replace(suffix, suffix[1:])
+      modified.append(p)
+      p.makefile(gabc, mode, diff)
+    if gabc.count("San(") == 1 and sum([gabc.count(suffix) for suffix in suffixes]) != 1 :
+      pathological.append(p)
+    if gabc.count("San(") > 1:
+      pathological.append(p)
+  return (modified, pathological)
