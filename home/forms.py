@@ -59,6 +59,13 @@ class CommentForm(forms.Form):
 class CommentEditForm(forms.Form):
   comment = forms.CharField(label='Edit comment:', widget=forms.Textarea(attrs={'rows':8}), required=True)
 
+class TableForm(forms.Form):
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    # Add the `multiple` attribute to allow selecting multiple files
+    self.fields["tables"].widget.attrs.update({"multiple": "true"})
+  tables = forms.FileField(label="Upload comparative tables: images, PDF or ZIP, max. size 50 Mo, name should only contain letters and underscores.", max_length=100, required=False)
+
 class VersifyForm(forms.Form):
   mode = forms.ChoiceField(choices = [
     ('1','1'),

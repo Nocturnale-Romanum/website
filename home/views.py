@@ -16,6 +16,7 @@ chantURLprefix = "chant"
 indexURLprefix = "index"
 contentsURLprefix = "contents"
 proposalURLprefix = "proposal"
+tablesURLprefix = "tables"
 
 def contents(request):
   """Passes to a template the list of feasts that have at least one proper chant, in the order of the book.
@@ -83,6 +84,7 @@ def chant(request, hcode):
   If the user has submitted a proposal, it is singled out for display."""
   template = loader.get_template('home/chant.html')
   chant = get_object_or_404(Chant, code=hcode)
+  n_tables = chant.tables.count()
   selected = chant.selected_proposal
   unselected = chant.proposals.all()
   if selected:
@@ -125,7 +127,9 @@ def chant(request, hcode):
     userproposal_comments = None
   context = {
     'feastURLprefix' : feastURLprefix,
+    'tablesURLprefix' : tablesURLprefix,
     'chant' : chant,
+    'n_tables' : n_tables,
     'selected' : {'proposal': selected, 'link': selected_img_path, 'sourcelink': selected_source_url, 'comments': selected_comments, 'gabc_url': selected_gabc_path, 'gabc_code': selected_gabc_code},
     'userproposal' : {'proposal': userproposal, 'link': userproposal_img_path, 'sourcelink': userproposal_source_url, 'comments': userproposal_comments, 'gabc_url': userproposal_gabc_path, 'gabc_code': userproposal_gabc_code},
     'unselected' : [{'proposal': p, 'link': p.imgurl(), 'sourcelink': p.sourceurl(), 'comments': list(p.comments.order_by('date'))[-3:], 'gabc_url': p.gabcurl(), 'gabc_code': p.url_encoded_gabc()} for p in unselected],
@@ -282,6 +286,27 @@ def comment_delete(request, id):
   if (request.user.is_staff or request.user == comment.author):
     comment.delete()
   return redirect("/"+proposalURLprefix+"/"+hcode+"/"+proposal_submitter+"/")
+
+def tables(request, hcode):
+  template = loader.get_template('home/tables.html')
+  c = get_object_or_404(Chant, code=hcode)
+  if request.method == "GET":
+    form = TableForm()
+    context = {
+      'chantURLprefix': chantURLprefix,
+      'feastURLprefix': feastURLprefix,
+      'chant':c,
+      'form': form,
+      'tables':c.tables.all(),
+    }
+    return HttpResponse(template.render(context, request))
+  elif request.method == "POST":
+    if request.user.is_authenticated:
+      for f in request.FILES.getlist('tables'):
+        t = Table(chant=c, uploader=request.user, tablefile=f)
+        if t.tablefile.size < 50000000 and t.tablefile.name.split('.')[-1] in ['jpg', 'png', 'pdf', 'zip', 'JPG', 'PNG', 'PDF', 'ZIP']:
+          t.save()
+    return redirect("/"+tablesURLprefix+"/"+hcode+"/")
 
 def notifications(request):
   if not request.user.is_authenticated :

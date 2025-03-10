@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block body_class %}template-homepage{% endblock %}
+
+
+{% block content %}
+
+<div class="row">
+  <div class="col-sm-10">
+
+    <h3>Comparative tables for: {{ chant.incipit }}</h3>
+    <div class="row">
+      <div class="col-6">
+        Feast: {{ chant.feast.title }}
+      </div>
+      <div class="col-6">
+        <a href="/{{ chantURLprefix }}/{{ chant.code }}/">Go to chant</a> | <a href="/{{ feastURLprefix }}/{{ chant.feast.code }}/">Go to feast</a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-6">
+        Office_part: {{ chant.office_part }}
+      </div>
+      <div class="col-6">
+        Cantus ID: 
+  {% if chant.cantus_id %}
+          <a href="http://cantusindex.org/id/{{ chant.cantus_id }}">{{ chant.cantus_id }}</a>
+  {% else %}
+          Unspecified
+  {% endif %}
+      </div>
+    <div>
+
+    {% for table in tables %}
+
+    <figure>
+      <blockquote class="blockquote">
+        <a href={{ table.tablefile.url }} download>{{ table.tablefile.name }}</a>
+      </blockquote>
+      <figcaption class="blockquote-footer">
+        {{ table.uploader }} - <cite>{{ table.upload_date }}</cite> {% if table.uploader == request.user or request.user.is_staff %}- <a href="/table/{{ table.id }}/delete/">delete</a>{% endif %}
+      </figcaption>
+    </figure>
+
+    {% endfor %}
+
+  {% if request.user.is_authenticated %}
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+      {{ form.tables|as_crispy_field }}
+  <button type="submit" class="btn btn-success">Upload</button>
+</form>
+
+  {% else %}
+
+<a href="/login/?next={{ request.path }}"><button type="button" class="btn btn-outline-primary me-2">Log in to add tables</button></a>
+
+  {% endif %}
+
+</div>
+</div>
+
+{% endblock content %}

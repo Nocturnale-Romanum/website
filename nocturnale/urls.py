@@ -28,6 +28,7 @@ urlpatterns = [
     path('removersigns/', home_views.removersigns),
     path('feast/<slug:fcode>/', home_views.feast),
     path('chant/<slug:hcode>/', home_views.chant),
+    path('tables/<slug:hcode>/', home_views.tables),
     path('index/<slug:opart>/', home_views.index),
     path('index/', home_views.index),
     path('notifications/', home_views.notifications),

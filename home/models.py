@@ -170,6 +170,16 @@ class RelatedChantsClass(models.Model):
     in order to easily access duplicates of a given chant."""
     pass
 
+def get_table_upload_path(table, filename):
+  return 'tables/'+table.chant.code+'__'+''.join(x for x in filename if x.isalpha() or x == "_" or x == ".")
+
+class Table(models.Model):
+    """This class represents a comparative table associated to a particular chant."""
+    chant = models.ForeignKey("Chant", null=False, on_delete=models.PROTECT, related_name="tables")
+    tablefile = models.FileField(upload_to=get_table_upload_path)
+    uploader = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="tables", null=False, on_delete=models.PROTECT)
+    upload_date = models.DateTimeField(default=datetime.now)
+
 class TexSnippet(models.Model):
     """Tex snippet entry model"""
     tex_code = models.TextField()
