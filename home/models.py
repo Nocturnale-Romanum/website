@@ -139,6 +139,12 @@ class Proposal(models.Model):
         if set([c.status for c in f.chants.all()]).issubset({"SELECTED", "REVIEWED"}):
           f.status = "REVIEWED"
           f.save()
+        if set([c.status for c in f.chants.filter(office_part="re")]).issubset({"SELECTED", "REVIEWED"}):
+          f.re_status = "REVIEWED"
+          f.save()
+        if set([c.status for c in f.chants.exclude(office_part="re")]).issubset({"SELECTED", "REVIEWED"}):
+          f.an_status = "REVIEWED"
+          f.save()
       try:
         os.system("cd nocturnale/static && git add gabc && git commit -m {} --author \"{} <{}@marteo.fr>\"&& git fetch && git rebase origin/main && git push".format(commitmsg, self.submitter.username, self.submitter.username))
       except:
@@ -207,6 +213,8 @@ class Feast(models.Model):
     # 1 is for the most solemn occasions, 2 is for all feasts and sundays, 3 is normally for ferias.
     title_level = models.IntegerField(null=False, default=1)
     status = models.CharField(max_length=10, choices=[(x,x) for x in ["DEFINITIVE", "REVIEWED", "SELECTED", "POPULATED", "MISSING"]], null=False, blank=False, default="MISSING")
+    re_status = models.CharField(max_length=10, choices=[(x,x) for x in ["DEFINITIVE", "REVIEWED", "SELECTED", "POPULATED", "MISSING"]], null=False, blank=False, default="MISSING")
+    an_status = models.CharField(max_length=10, choices=[(x,x) for x in ["DEFINITIVE", "REVIEWED", "SELECTED", "POPULATED", "MISSING"]], null=False, blank=False, default="MISSING")
     def __str__(self):
       return self.code
 

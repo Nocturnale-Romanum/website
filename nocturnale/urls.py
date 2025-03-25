@@ -21,6 +21,8 @@ urlpatterns = [
 
     path('search/', search_views.search, name='search'),
 
+
+    path('contents/<slug:opart>/', home_views.contents),
     path('contents/', home_views.contents),
     path('versify/', home_views.versify_view),
     path('transpose/', home_views.transpose),

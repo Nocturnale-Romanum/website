@@ -18,18 +18,41 @@ contentsURLprefix = "contents"
 proposalURLprefix = "proposal"
 tablesURLprefix = "tables"
 
-def contents(request):
+def contents(request, opart=""):
   """Passes to a template the list of feasts that have at least one proper chant, in the order of the book.
   100, 2350, 5290, 6000 are magic values of the 'order' field in the Feasts table, that correspond to the major titles :
   proper of seasons, of saints, and commons"""
   template = loader.get_template('home/contents.html')
   feasts = Feast.objects.filter(chants__isnull=False).distinct().order_by("order")
+  if opart == "re":
+    feasts = [f for f in feasts if f.chants.filter(office_part="re")]
+  if opart == "an":
+    feasts = [f for f in feasts if f.chants.exclude(office_part="re")]
   ordinaryFeasts = [f for f in feasts if f.order < 100]
   temporeFeasts = [f for f in feasts if (f.order > 100 and f.order < 2350)]
   sanctisFeasts = [f for f in feasts if (f.order > 2350 and f.order < 5290)]
   communiaFeasts = [f for f in feasts if (f.order > 5290 and f.order < 6000)]
   appendixFeasts = [f for f in feasts if f.order > 6000]
+  if opart == "re":
+    ordinaryFeasts = [(f, f.re_status) for f in ordinaryFeasts]
+    temporeFeasts = [(f, f.re_status) for f in temporeFeasts]
+    sanctisFeasts = [(f, f.re_status) for f in sanctisFeasts]
+    communiaFeasts = [(f, f.re_status) for f in communiaFeasts]
+    appendixFeasts = [(f, f.re_status) for f in appendixFeasts]
+  elif opart == "an":
+    ordinaryFeasts = [(f, f.an_status) for f in ordinaryFeasts]
+    temporeFeasts = [(f, f.an_status) for f in temporeFeasts]
+    sanctisFeasts = [(f, f.an_status) for f in sanctisFeasts]
+    communiaFeasts = [(f, f.an_status) for f in communiaFeasts]
+    appendixFeasts = [(f, f.an_status) for f in appendixFeasts]
+  else:
+    ordinaryFeasts = [(f, f.status) for f in ordinaryFeasts]
+    temporeFeasts = [(f, f.status) for f in temporeFeasts]
+    sanctisFeasts = [(f, f.status) for f in sanctisFeasts]
+    communiaFeasts = [(f, f.status) for f in communiaFeasts]
+    appendixFeasts = [(f, f.status) for f in appendixFeasts]
   context = {
+    'contentsURLprefix' : contentsURLprefix,
     'feastURLprefix' : feastURLprefix,
     'indexURLprefix' : indexURLprefix,
     'ordinaryFeasts' : ordinaryFeasts,
@@ -274,6 +297,12 @@ def select(request, hcode, submitter):
   f = c.feast
   if set([cc.status for cc in f.chants.all()]) == {"SELECTED"}: # all chants of the relevant feast are now SELECTED
     f.status = "SELECTED"
+    f.save()
+  if set([cc.status for cc in f.chants.filter(office_part="re")]) == {"SELECTED"}: # all chants of the relevant feast are now SELECTED
+    f.re_status = "SELECTED"
+    f.save()
+  if set([cc.status for cc in f.chants.exclude(office_part="re")]) == {"SELECTED"}: # all chants of the relevant feast are now SELECTED
+    f.an_status = "SELECTED"
     f.save()
   commitmsg = "{} selected {}'s proposal for {}".format(request.user.username, submitter, hcode)
   p.select(commitmsg=shlex.quote(commitmsg)) # this makes p copy its file hcode_submitter.gabc into hcode.gabc and commit that change

@@ -21,9 +21,9 @@ Alphabetical indices : <a href=/{{ indexURLprefix }}/>All chants</a> |
 
   <h2>Proprium de Tempore</h2>
 
-{% for feast in temporeFeasts %}
+{% for feast, status in temporeFeasts %}
 
-    <a href=/{{ feastURLprefix }}/{{ feast.code }}/>{% if feast.status == "SELECTED" %}☑️{% elif feast.status == "DEFINITIVE" %}✅{% elif feast.status == "REVIEWED" %}❗{% else %}✖️{% endif %} 
+    <a href=/{{ feastURLprefix }}/{{ feast.code }}/>{% if status == "SELECTED" %}☑️{% elif status == "DEFINITIVE" %}✅{% elif status == "REVIEWED" %}❗{% else %}✖️{% endif %} 
                                                      {% if feast.day %}{{ feast.day }} : {% endif %}{{ feast.title }}</a><br>
 
 {% endfor %}
@@ -34,36 +34,36 @@ Alphabetical indices : <a href=/{{ indexURLprefix }}/>All chants</a> |
 
   <h2>Ordinarium</h2>
 
-{% for feast in ordinaryFeasts %}
+{% for feast, status in ordinaryFeasts %}
 
-    <a href=/{{ feastURLprefix }}/{{ feast.code }}/>{% if feast.status == "SELECTED" %}☑️{% elif feast.status == "DEFINITIVE" %}✅{% elif feast.status == "REVIEWED" %}❗{% else %}✖️{% endif %} 
+    <a href=/{{ feastURLprefix }}/{{ feast.code }}/>{% if status == "SELECTED" %}☑️{% elif status == "DEFINITIVE" %}✅{% elif status == "REVIEWED" %}❗{% else %}✖️{% endif %} 
                                                      {% if feast.day %}{{ feast.day }} : {% endif %}{{ feast.title }}</a><br>
 
 {% endfor %}
 
   <h2>Communia</h2>
 
-{% for feast in communiaFeasts %}
+{% for feast, status in communiaFeasts %}
 
-    <a href=/{{ feastURLprefix }}/{{ feast.code }}/>{% if feast.status == "SELECTED" %}☑️{% elif feast.status == "DEFINITIVE" %}✅{% elif feast.status == "REVIEWED" %}❗{% else %}✖️{% endif %} 
+    <a href=/{{ feastURLprefix }}/{{ feast.code }}/>{% if status == "SELECTED" %}☑️{% elif status == "DEFINITIVE" %}✅{% elif status == "REVIEWED" %}❗{% else %}✖️{% endif %} 
                                                      {% if feast.day %}{{ feast.day }} : {% endif %}{{ feast.title }}</a><br>
 
 {% endfor %}
 
   <h2>Proprium Sanctorum</h2>
 
-{% for feast in sanctisFeasts %}
+{% for feast, status in sanctisFeasts %}
 
-    <a href=/{{ feastURLprefix }}/{{ feast.code }}/>{% if feast.status == "SELECTED" %}☑️{% elif feast.status == "DEFINITIVE" %}✅{% elif feast.status == "REVIEWED" %}❗{% else %}✖️{% endif %} 
+    <a href=/{{ feastURLprefix }}/{{ feast.code }}/>{% if status == "SELECTED" %}☑️{% elif status == "DEFINITIVE" %}✅{% elif status == "REVIEWED" %}❗{% else %}✖️{% endif %} 
                                                      {% if feast.day %}{{ feast.day }} : {% endif %}{{ feast.title }}</a><br>
 
 {% endfor %}
 
   <h2>Appendix</h2>
 
-{% for feast in appendixFeasts %}
+{% for feast, status in appendixFeasts %}
 
-    <a href=/{{ feastURLprefix }}/{{ feast.code }}/>{% if feast.status == "SELECTED" %}☑️{% elif feast.status == "DEFINITIVE" %}✅{% elif feast.status == "REVIEWED" %}❗{% else %}✖️{% endif %} 
+    <a href=/{{ feastURLprefix }}/{{ feast.code }}/>{% if status == "SELECTED" %}☑️{% elif status == "DEFINITIVE" %}✅{% elif status == "REVIEWED" %}❗{% else %}✖️{% endif %} 
                                                      {% if feast.day %}{{ feast.day }} : {% endif %}{{ feast.title }}</a><br>
 
 {% endfor %}
@@ -71,4 +71,13 @@ Alphabetical indices : <a href=/{{ indexURLprefix }}/>All chants</a> |
 </div>
 </div>
 
+<hr/>
+
+<div class="row">
+<div class="container-fluid text-center">
+
+<a href=/{{ contentsURLprefix }}/an/>Antiphonale progress</a> --- <a href=/{{ contentsURLprefix }}/re/>Responsoriale progress</a> --- <a href=/{{ contentsURLprefix }}/>Overall progress</a>
+
+</div>
+</div>
 {% endblock content %}
