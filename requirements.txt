@@ -1,6 +1,11 @@
-Django>=3.2,<3.3
+django
 django-allauth
-wagtail>=2.15,<2.16
+wagtail
 pdf2image
 django-crispy-forms
 django-bootstrap4
+django_social_share
+puput
+colorful
+crispy_bootstrap4
+mysql-connector

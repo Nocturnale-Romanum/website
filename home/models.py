@@ -8,10 +8,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
 
-from wagtail.core.models import Page
-from wagtail.core.fields import RichTextField
-from wagtail.admin.edit_handlers import FieldPanel, PageChooserPanel
-from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.models import Page
+from wagtail.fields import RichTextField
+from wagtail.admin.panels import FieldPanel, PageChooserPanel
 
 gabcFolder = os.path.join("nocturnale", "static", "gabc")
 pngFolder = os.path.join("nocturnale", "static", "pngs")
@@ -34,7 +33,7 @@ class HomePage(Page):
     )
     # added fields should be added there as well in order to be editable in the admin.
     content_panels = Page.content_panels + [
-        ImageChooserPanel("image"),
+        FieldPanel("image"),
         FieldPanel("text"),
     ]
 

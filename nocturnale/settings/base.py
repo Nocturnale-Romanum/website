@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'wagtail.images',
     'wagtail.search',
     'wagtail.admin',
-    'wagtail.core',
+    'wagtail',
 
     'wagtail.contrib.sitemaps',
     'wagtail.contrib.routable_page',
@@ -98,7 +98,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'nocturnale.wsgi.application'
-
+CSRF_TRUSTED_ORIGINS = ['https://nocturnale.marteo.fr']
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -184,7 +184,7 @@ MEDIA_URL = '/media/'
 # Wagtail settings
 
 WAGTAIL_SITE_NAME = "nocturnale"
-
+WAGTAILADMIN_BASE_URL = "https://nocturnale.marteo.fr/admin/"
 # Search
 # https://docs.wagtail.io/en/stable/topics/search/backends.html
 WAGTAILSEARCH_BACKENDS = {
@@ -205,9 +205,8 @@ SITE_ID = 1
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True # authed users are redirected from /login, /signup etc. to...
 LOGIN_REDIRECT_URL = "/"
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = True
-ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+ACCOUNT_LOGIN_METHODS = ("username", "email")
 ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
