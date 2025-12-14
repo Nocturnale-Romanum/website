@@ -222,7 +222,7 @@ def edit_proposal(request, hcode, cloned=""):
     comment.save()
     commitmsg = "{} edited {}: {}".format(request.user.username, chant.code, commentmsg)
     differentia=request.POST.get('diff')
-    proposal.update(gabc=gabc, mode=mode, differentia=differentia, commitmsg=shlex.quote(commitmsg))
+    proposal.update(gabc=gabc.replace('\r\n', '\n'), mode=mode, differentia=differentia, commitmsg=shlex.quote(commitmsg))
     return redirect("/"+chantURLprefix+"/"+hcode+"/")
 
 def proposal(request, hcode, submitter):
