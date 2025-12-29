@@ -608,3 +608,43 @@ def sanctus_syllabification(proposal_set):
     if gabc.count("San(") > 1:
       pathological.append(p)
   return (modified, pathological)
+
+def check_pressus(p):
+  """takes a proposal and checks that a pressus minor always repeats the notes that precedes it, by looking for 'pi' in the NABC and checking this property in the corresponding gabc.
+     could be repurposed to check other properties of GABC depending on NABC. Generates false positives when a pi and a vs or sa are present in the same snippet."""
+  gabc = p.gabc_mode_diff()[0]
+  gabc = gabc.split("%%")[-1]
+  unparsed_triplets = gabc.split(')')
+  parsed_triplets = []
+  for t in unparsed_triplets[:-1]:
+      try:
+          (syllable, gabcnabc) = t.split('(')
+          gabc = gabcnabc.split('|')[::2]
+          nabc = gabcnabc.split('|')[1::2]
+          parsed_triplets.append({"syllable":syllable, "code":list(zip(gabc, nabc))})
+      except Exception as e:
+          print(p)
+          print(e)
+          print(t)
+  for t in parsed_triplets:
+      for gabc, nabc in t["code"]:
+          if "pi" in nabc:
+              if check_oriscus(gabc):
+                  print(p)
+                  print(t)
+
+
+def check_oriscus(gabc):
+  """Helper function for check_pressus. Given a GABC snippet, checks that all instances of an oriscus repeat the previous note."""
+  s = deque(gabc)
+  cur_note=''
+  prev_note=''
+  while(s):
+    cur_char=s.popleft()
+    if cur_char.lower() in ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm']:
+      prev_note = cur_note
+      cur_note = cur_char.lower()
+    if cur_char == 'o':
+      if prev_note != cur_note:
+        return True
+  return False
