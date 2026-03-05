@@ -12,7 +12,7 @@
 <p>Office_part: {{ chant.office_part }}</p>
 <p>Cantus ID: 
    {% if chant.cantus_id %}
-     <a href="http://cantusindex.org/id/{{ chant.cantus_id }}">{{ chant.cantus_id }}</a>
+     <a href="http://cantusindex.org/id/{{ chant.cantus_id }}" target="_blank">{{ chant.cantus_id }}</a>
    {% else %}
      Unspecified
    {% endif %}
@@ -48,7 +48,7 @@ Submitted by : {{ selected.proposal.submitter }}
   {% endif %}
   {% if selected.proposal.source %}
     {% if selected.sourcelink %}
-      Source: <a href="{{ selected.sourcelink }}">{{ selected.proposal.source.siglum }}, {{ selected.proposal.sourcepage }}</a><br><br>
+      Source: <a href="{{ selected.sourcelink }}" target="_blank">{{ selected.proposal.source.siglum }}, {{ selected.proposal.sourcepage }}</a><br><br>
     {% else %}
       Source: {{ selected.proposal.source.siglum }}, {{ selected.proposal.sourcepage }}<br>
 	{% endif %}
@@ -126,7 +126,7 @@ Submitted by : {{ selected.proposal.submitter }}
 
     {% if userproposal.proposal.source %}
       {% if userproposal.sourcelink %}
-        Source: <a href="{{ userproposal.sourcelink }}">{{ userproposal.proposal.source.siglum }}, {{ userproposal.proposal.sourcepage }}</a><br><br>
+        Source: <a href="{{ userproposal.sourcelink }}" target="_blank">{{ userproposal.proposal.source.siglum }}, {{ userproposal.proposal.sourcepage }}</a><br><br>
       {% else %}
         Source: {{ userproposal.proposal.source.siglum }}, {{ userproposal.proposal.sourcepage }}<br>
       {% endif %}
@@ -213,7 +213,7 @@ Submitted by : {{ selected.proposal.submitter }}
 
   {% if data.proposal.source %}
     {% if data.sourcelink %}
-      Source: <a href="{{ data.sourcelink }}">{{ data.proposal.source.siglum }}, {{ data.proposal.sourcepage }}</a><br><br>
+      Source: <a href="{{ data.sourcelink }}" target="_blank">{{ data.proposal.source.siglum }}, {{ data.proposal.sourcepage }}</a><br><br>
     {% else %}
       Source: {{ data.proposal.source.siglum }}, {{ data.proposal.sourcepage }}<br>
     {% endif %}

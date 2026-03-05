@@ -27,7 +27,7 @@
       <div class="col-6">
         Cantus ID: 
   {% if chant.cantus_id %}
-          <a href="http://cantusindex.org/id/{{ chant.cantus_id }}">{{ chant.cantus_id }}</a>
+          <a href="http://cantusindex.org/id/{{ chant.cantus_id }}" target="_blank">{{ chant.cantus_id }}</a>
   {% else %}
           Unspecified
   {% endif %}
@@ -47,7 +47,7 @@
       <div class="col-6">
   {% if proposal.source %}
     {% if sourcelink %}
-        Source: <a href="{{ sourcelink }}">{{ proposal.source.siglum }}, {{ proposal.sourcepage }}</a><br>
+        Source: <a href="{{ sourcelink }}" target="_blank">{{ proposal.source.siglum }}, {{ proposal.sourcepage }}</a><br>
     {% else %}
         Source: {{ proposal.source.siglum }}, {{ proposal.sourcepage }}<br>
     {% endif %}
