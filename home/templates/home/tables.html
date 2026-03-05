@@ -38,7 +38,7 @@
 
     <figure>
       <blockquote class="blockquote">
-        <a href={{ table.tablefile.url }} download>{{ table.tablefile.name }}</a>
+        <a href={{ table.tablefile.url }}>{{ table.tablefile.name }}</a>
       </blockquote>
       <figcaption class="blockquote-footer">
         {{ table.uploader }} - <cite>{{ table.upload_date }}</cite> {% if table.uploader == request.user or request.user.is_staff %}- <a href="/table/{{ table.id }}/delete/">delete</a>{% endif %}
