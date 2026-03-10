@@ -19,6 +19,7 @@ nocturnale/static/*.pdf
 nocturnale/static/README.md
 nocturnale/static/LICENSE
 nocturnale/static/*.txt
+nocturnale/static/calendrier.xlsx
 *.gtex
 *.aux
 *.gaux
