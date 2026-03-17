@@ -5,6 +5,7 @@ from .util import *
 import os
 import shlex
 from time import time
+import re
 
 from django.http import HttpResponse
 from django.template import loader
@@ -424,3 +425,47 @@ def removersigns(request):
   }
   return HttpResponse(template.render(context, request))
 
+def gabcsearch(request):
+  template = loader.get_template('home/gabcsearch.html')
+  if not request.user.is_authenticated :
+    return redirect("/"+contentsURLprefix+"/")
+  if request.method == 'GET':
+    form = GABCSearchForm(initial = {'search_scope': 'u', 'search_officepart':'all', 'search_mode':'all'})
+    answer = []
+    search_text = ""
+  if request.method == 'POST':
+    search_text = request.POST.get('search_text')
+    search_scope = request.POST.get('search_scope')
+    search_mode = request.POST.get('search_mode')
+    search_officepart = request.POST.get('search_officepart')
+    search_contributors = [int(x) for x in request.POST.getlist('search_contributors')]
+    form = GABCSearchForm(initial = {'search_text':search_text, 'search_scope':search_scope, 'search_contributors':search_contributors, 'search_mode':search_mode})
+    if search_scope == 'u':
+      contributor_list = [request.user]
+    elif search_scope == 's':
+      contributor_list = [u for u in User.objects.filter(id__in=search_contributors)]
+    else:
+      contributor_list = [u for u in User.objects.all() if u.proposals.all()]
+    if search_officepart == 'all':
+      officepart_list = ['re', 'an', 'in', 'hy', 'ps', 'or']
+    else:
+      officepart_list = [search_officepart]
+    matches = [p for p in Proposal.objects.filter(submitter__in=contributor_list).filter(chant__office_part__in=officepart_list)]
+    if search_mode != 'all':
+      matches = [p for p in matches if p.gabc_mode_diff()[1] == search_mode]
+    answer = []
+    for p in matches:
+      gabc = p.gabc_mode_diff()[0]
+      if search_text in gabc:
+        for index in [m.start() for m in re.finditer(re.escape(search_text), gabc)]:
+          pre = gabc[:index]
+          post = gabc[index+len(search_text):]
+          pre = pre[-40:]
+          post = post[:40]
+          answer.append({'proposal':p, 'sample_before':pre, 'sample_after':post})
+  context = {
+    'form':form,
+    'answer':answer,
+    'searched_text':search_text,
+  }
+  return HttpResponse(template.render(context, request))

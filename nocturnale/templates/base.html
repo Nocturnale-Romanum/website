@@ -67,6 +67,7 @@
     
           <div class="col text-end">
 	{% if request.user.is_authenticated %}
+            <a href="/gabcsearch/"><button type="button" class="btn btn-outline-primary me-2">Search GABC</button></a>
             <b>{{ request.user.username }}</b>
 	    {% if user_notifications > 0 %}
 		<a href="/notifications/"><button type="button" class="btn btn-outline-danger">

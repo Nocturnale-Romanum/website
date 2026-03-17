@@ -1,33 +1,32 @@
 from django import forms
-from home.models import Source
+from home.models import *
 
-class ProposalEditForm(forms.Form):
-  mode = forms.ChoiceField(choices = [
-    ('',''),
-    ('1','1'),
-    ('2','2'),
-    ('2*','2*'),
-    ('3','3'),
-    ('4','4'),
-    ('5','5'),
-    ('6','6'),
-    ('7','7'),
-    ('8','8'),
-    ('C','C'),
-    ('D','D'),
-    ('E','E'),
-    ('P','T.pereg.'),
-    ('irreg.', 'irreg.'),
-  ], required=False)
-  diff = forms.ChoiceField(label='Differentia', choices = [
-    ('',''),
-    ('a','a'),
-    ('a*','a*'),
-    ('a2','a2'),
-    ('a3','a3'),
-    ('b','b'),
-    ('c','c'),
-    ('c2','c2'),
+mode_list = [
+    ('',"(none)"),
+    ('1',"1"),
+    ('2',"2"),
+    ('3',"3"),
+    ('4',"4"),
+    ('5',"5"),
+    ('6',"6"),
+    ('7',"7"),
+    ('8',"8"),
+    ('C',"C"),
+    ('D',"D"),
+    ('E',"E"),
+    ('P',"T.pereg."),
+    ('irreg.', "irreg."),
+  ]
+
+diff_list = [
+    ('',"(none)"),
+    ('a',"a"),
+    ('a*',"a*"),
+    ('a2',"a2"),
+    ('a3',"a3"),
+    ('b',"b"),
+    ('c',"c"),
+    ('c2',"c2"),
     ('d','d'),
     ('d-','d-'),
     ('d2','d2'),
@@ -40,7 +39,11 @@ class ProposalEditForm(forms.Form):
     ('g2','g2'),
     ('g3','g3'),
     ('a','a'),
-  ], required=False)
+  ]
+
+class ProposalEditForm(forms.Form):
+  mode = forms.ChoiceField(choices = mode_list, required=False)
+  diff = forms.ChoiceField(label='Differentia', choices = diff_list, required=False)
   nabcstatus = forms.ChoiceField(label="NABC status", choices = [
     ('none', "No NABC"),
     ('auth', "From a manuscript"),
@@ -99,3 +102,14 @@ class RemoveNabcHeightsForm(forms.Form):
 class RemoveRsignsForm(forms.Form):
   gabc = forms.CharField(label='Full GABC (with text, with or without NABC)', widget=forms.Textarea(attrs={'rows':8}), required=False)
 
+class GABCSearchForm(forms.Form):
+  search_text = forms.CharField(label="GABC to be searched", required=True)
+  scope_choices = [
+    ('u', "Search my contributions"),
+    ('a', "Search all contributions"),
+    ('s', "Search contributions from those users:"),
+  ]
+  search_scope = forms.ChoiceField(widget=forms.RadioSelect, choices=scope_choices)
+  search_mode = forms.ChoiceField(label="Search only pieces of this mode:", choices = [('all', "all")] + mode_list)
+  search_officepart = forms.ChoiceField(label="Search only pieces of this type:", choices = [('all', "all"), ('re', "Resp."), ('an', "Ant."), ('in', "Inv."), ('hy', "Hy."), ('ps', "Ps."), ('or', "Toni")])
+  search_contributors = forms.ChoiceField(label="", widget=forms.SelectMultiple, choices=[(u.id, u.username) for u in User.objects.all() if u.proposals.all()], required=False)
