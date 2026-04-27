@@ -19,9 +19,6 @@ urlpatterns = [
     path('admin/', include(wagtailadmin_urls)),
     path('documents/', include(wagtaildocs_urls)),
 
-    path('search/', search_views.search, name='search'),
-
-
     path('contents/<slug:opart>/', home_views.contents),
     path('contents/', home_views.contents),
     path('versify/', home_views.versify_view),
@@ -35,6 +32,8 @@ urlpatterns = [
     path('index/', home_views.index),
     path('notifications/', home_views.notifications),
     path('gabcsearch/', home_views.gabcsearch),
+    path('textsearch/', home_views.textsearch),
+    path('compilationtest/', home_views.gabccompiletest),
     path('edit_proposal/<slug:hcode>/', home_views.edit_proposal),
     path('edit_proposal/<slug:hcode>/<slug:cloned>/', home_views.edit_proposal),
     path('proposal/<slug:hcode>/<slug:submitter>/', home_views.proposal),

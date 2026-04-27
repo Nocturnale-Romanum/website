@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block body_class %}template-homepage{% endblock %}
+
+
+{% block content %}
+
+<div class="row">
+
+  <h2>Text search and replace</h2>
+
+<form method="post">
+  {% csrf_token %}
+  <div class="row">
+    <div class="col-6">
+      {{ form.search_text|as_crispy_field }}
+      <button type="submit" class="btn btn-success">Search</button>
+    </div>
+    <div class="col-6">
+      {{ form.search_scope|as_crispy_field }} 
+    </div>
+  </div>
+</form>
+  <div class="row">
+    <div class="col-12">
+      <h4>Results</h4>
+
+      <div class="row">
+        <div class="col-1">
+          Genre
+        </div>
+        <div class="col-3">
+          Incipit
+        </div>
+        <div class="col-2">
+          Submitter
+        </div>
+        <div class="col-6">
+          Matching GABC
+        </div>
+      </div>
+
+{% for data in answer %}
+      <div class="row">
+        <div class="col-1">
+{{ data.proposal.chant.office_part }}
+        </div>
+        <div class="col-3">
+<a href="/proposal/{{ data.proposal.chant.code }}/{{ data.proposal.submitter }}/">{{ data.proposal.chant.incipit }}</a>
+        </div>
+        <div class="col-2">
+{{ data.proposal.submitter }}
+        </div>
+        <div class="col-6">
+{{ data.sample_before }}<b>{{ searched_text }}</b>{{ data.sample_after }}
+        </div>
+      </div>
+{% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock content %}

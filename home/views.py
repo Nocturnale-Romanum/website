@@ -451,6 +451,8 @@ def gabcsearch(request):
     else:
       officepart_list = [search_officepart]
     matches = [p for p in Proposal.objects.filter(submitter__in=contributor_list).filter(chant__office_part__in=officepart_list)]
+    if search_scope == 'x':
+      matches = [p for p in matches if p.chant_where_this_is_selected.all()]
     if search_mode != 'all':
       matches = [p for p in matches if p.gabc_mode_diff()[1] == search_mode]
     answer = []
@@ -469,3 +471,59 @@ def gabcsearch(request):
     'searched_text':search_text,
   }
   return HttpResponse(template.render(context, request))
+
+def textsearch(request):
+  template = loader.get_template('home/textsearch.html')
+  if not request.user.is_authenticated :
+    return redirect("/"+contentsURLprefix+"/")
+  if request.method == 'GET':
+    form = TextSearchForm(initial = {'search_scope': 'u'})
+    answer = []
+    search_text = ""
+  if request.method == 'POST':
+    search_text = request.POST.get('search_text')
+    search_scope = request.POST.get('search_scope')
+    form = TextSearchForm(initial = {'search_text':search_text, 'search_scope':search_scope})
+    if search_scope == 'u':
+      contributor_list = [request.user]
+    else:
+      contributor_list = [u for u in User.objects.all() if u.proposals.all()]
+    matches = [p for p in Proposal.objects.filter(submitter__in=contributor_list)]
+    if search_scope == 'x':
+      matches = [p for p in matches if p.chant_where_this_is_selected.all()]
+    for p in matches:
+      gabc = p.gabc_mode_diff()[0]
+      text = ''
+  context = {
+    'form':form,
+    'answer':answer,
+    'searched_text':search_text,
+  }
+  return HttpResponse(template.render(context, request))
+
+def gabccompiletest(request):
+  template = loader.get_template('home/gabccompiletest.html')
+  temp_file_name = "tempfile"
+  if not request.user.is_authenticated :
+    return redirect("/"+contentsURLprefix+"/")
+  if request.method == 'GET':
+    form = CompileTestForm()
+    answer = ""
+    gabc = ""
+  if request.method == 'POST':
+    gabc = request.POST.get('gabc')
+    form = CompileTestForm(initial = {'gabc':gabc})
+    gabc = gabc.replace('\r\n', '\n')
+    f = open(temp_file_name+".gabc", 'w')
+    f.write(gabc)
+    f.close()
+    os.system("gregorio {}.gabc > {}.log 2>&1".format(temp_file_name, temp_file_name))
+    answer = open(temp_file_name+".log").read()
+    os.system("rm {}.*".format(temp_file_name))
+  context = {
+    'form':form,
+    'answer':answer,
+    'gabc':gabc,
+  }
+  return HttpResponse(template.render(context, request))
+

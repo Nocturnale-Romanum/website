@@ -50,7 +50,7 @@ class ProposalEditForm(forms.Form):
     ('arfv', "R. from a manuscript, V. synthetic"),
     ('fake', "Synthetic/Contrafactum"),
   ], required=False)
-  gabc = forms.CharField(label='GABC code', widget=forms.Textarea(attrs={'rows':18}) )
+  gabc = forms.CharField(label='GABC code without headers', widget=forms.Textarea(attrs={'rows':18}) )
   source = forms.ChoiceField(choices = [('','')] + [ (source.siglum, source.siglum) for source in Source.objects.all().order_by('siglum') ], required=False)
   sourcepage = forms.CharField(label='Source page', required=False)
   comment = forms.CharField(label='Summary of changes', required=True)
@@ -107,9 +107,23 @@ class GABCSearchForm(forms.Form):
   scope_choices = [
     ('u', "Search my contributions"),
     ('a', "Search all contributions"),
+    ('x', "Search contributions marked as selected"),
     ('s', "Search contributions from those users:"),
   ]
   search_scope = forms.ChoiceField(widget=forms.RadioSelect, choices=scope_choices)
   search_mode = forms.ChoiceField(label="Search only pieces of this mode:", choices = [('all', "all")] + mode_list)
   search_officepart = forms.ChoiceField(label="Search only pieces of this type:", choices = [('all', "all"), ('re', "Resp."), ('an', "Ant."), ('in', "Inv."), ('hy', "Hy."), ('ps', "Ps."), ('or', "Toni")])
   search_contributors = forms.ChoiceField(label="", widget=forms.SelectMultiple, choices=[(u.id, u.username) for u in User.objects.all() if u.proposals.all()], required=False)
+
+class TextSearchForm(forms.Form):
+  search_text = forms.CharField(label="Text to be searched", required=True)
+  scope_choices = [
+    ('u', "Search my contributions"),
+    ('a', "Search all contributions"),
+    ('x', "Search contributions marked as selected"),
+  ]
+  search_scope = forms.ChoiceField(widget=forms.RadioSelect, choices=scope_choices)
+
+class CompileTestForm(forms.Form):
+  gabc = forms.CharField(label='GABC file contents with headers', widget=forms.Textarea(attrs={'rows':18}) )
+

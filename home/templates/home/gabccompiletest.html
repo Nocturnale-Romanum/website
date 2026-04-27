@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block body_class %}template-homepage{% endblock %}
+
+
+{% block content %}
+
+<div class="row">
+
+  <h2>GABC compilation test</h2>
+
+<form method="post">
+  {% csrf_token %}
+  <div class="row">
+    <div class="col-8">
+      {{ form.gabc|as_crispy_field }}
+    </div>
+    <div class="col-4">
+      <button type="submit" class="btn btn-success">Test</button>
+    </div>
+  </div>
+</form>
+  <div class="row">
+    <div class="col-12">
+      <h4>Result</h4>
+{% if answer and answer.strip %} 
+      <div class="alert alert-danger" role="alert">
+        Error in GABC file: {{ answer }}
+      </div>
+{% else %}
+      <div class="alert alert-success" role="alert">
+        GABC file OK
+      </div>
+{% endif %}
+    </div>
+  </div>
+</div>
+{% endblock content %}
