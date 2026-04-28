@@ -1,8 +1,9 @@
 import os, shutil, sys
 from datetime import datetime
 
-import shlex
 import urllib.parse
+import subprocess
+from pathlib import Path
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -16,6 +17,39 @@ gabcFolder = os.path.join("nocturnale", "static", "gabc")
 pngFolder = os.path.join("nocturnale", "static", "pngs")
 pngUrlPrefix = "/static/pngs/"
 gabcUrlPrefix = "/static/gabc/"
+
+GIT_WORKDIR = Path("nocturnale/static")
+
+def run_git(*args):
+    """
+    Runs a git command in nocturnale/static, somewhat safely.
+    Raises an exception if the command fails.
+    """
+    try:
+      subprocess.run(
+          ["git", *args],
+          cwd=GIT_WORKDIR,
+          check=True,
+      )
+    except subprocess.CalledProcessError as e:
+      print("=== GIT ERROR ===")
+      print("Command:", e.cmd)
+      print("Return code:", e.returncode)
+      print("STDOUT:", e.stdout)
+      print("STDERR:", e.stderr)
+      raise
+
+def git_has_changes():
+    """
+    Runs git status and returns a boolean indicating if there are changes to commit.
+    """
+    result = subprocess.run(
+        ["git", "status", "--porcelain"],
+        cwd=GIT_WORKDIR,
+        capture_output=True,
+        text=True
+    )
+    return result.stdout.strip() != ""
 
 class HomePage(Page):
     """Somewhat generic page model.
@@ -101,10 +135,14 @@ class Proposal(models.Model):
       shutil.copyfile(fpath, new_fpath)
       if not commitmsg:
         commitmsg = "'{} was selected from the command line.'".format(self.chant.code)
-      try:
-        os.system("cd nocturnale/static && git add gabc && git commit -m {} && git fetch && git rebase origin/main && git push".format(commitmsg))
-      except:
-        pass
+      if git_has_changes():
+        run_git("add", "gabc")
+        run_git("commit", "-m", commitmsg)
+        run_git("fetch")
+        run_git("rebase", "origin/main")
+        run_git("push")
+      else:
+        raise ValueError("git status empty")
     def makepng(self):
       os.system("./tex_build/build.py "+os.path.join(gabcFolder, self.filename())+" "+pngFolder+" &")
     def sourceurl(self):
@@ -128,7 +166,6 @@ class Proposal(models.Model):
       # if no commit message was provided (e.g. by view edit_proposal) a default one is made
       if not commitmsg:
         commitmsg = self.chant.code + " by " + self.submitter.username + " was updated from the command line."
-        commitmsg = shlex.quote(commitmsg)
       self.makefile(gabc, mode, differentia)
       # if the chant has a selected proposal, we keep it, but mark the chant as reviewed.
       if self.chant.status == "SELECTED":
@@ -144,12 +181,17 @@ class Proposal(models.Model):
         if set([c.status for c in f.chants.exclude(office_part="re")]).issubset({"SELECTED", "REVIEWED"}):
           f.an_status = "REVIEWED"
           f.save()
-      try:
-        os.system("cd nocturnale/static && git add gabc && git commit -m {} --author \"{} <{}@marteo.fr>\"&& git fetch && git rebase origin/main && git push".format(commitmsg, self.submitter.username, self.submitter.username))
-      except:
-        pass
       self.makepng()
-
+      if git_has_changes():
+        run_git("add", "gabc")
+        commit_args = ["commit", "-m", commitmsg]
+        commit_args += ["--author", f'{self.submitter.username} <{self.submitter.username}@marteo.fr>']
+        run_git(*commit_args)
+        run_git("fetch")
+        run_git("rebase", "origin/main")
+        run_git("push")
+      else:
+        raise ValueError("git status empty")
 
 class Chant(models.Model):
     """This class represents a chant entry, that is, a specific sung part of a given day's Matins.

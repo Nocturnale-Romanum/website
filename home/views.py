@@ -3,10 +3,11 @@ from .forms import *
 from .util import *
 
 import os
-import shlex
 from time import time
 import re
+from subprocess import CalledProcessError
 
+from django.contrib import messages
 from django.http import HttpResponse
 from django.template import loader
 from django.shortcuts import get_object_or_404, redirect
@@ -223,7 +224,14 @@ def edit_proposal(request, hcode, cloned=""):
     comment.save()
     commitmsg = "{} edited {}: {}".format(request.user.username, chant.code, commentmsg)
     differentia=request.POST.get('diff')
-    proposal.update(gabc=gabc.replace('\r\n', '\n'), mode=mode, differentia=differentia, commitmsg=shlex.quote(commitmsg))
+    try:
+      proposal.update(gabc=gabc.replace('\r\n', '\n'), mode=mode, differentia=differentia, commitmsg=commitmsg)
+    except CalledProcessError:
+      messages.error(request, "Error during Git synchronization.")
+    except ValueError:
+      messages.info(request, "No change to synchronize.")
+    else:
+      messages.success(request, "Proposal saved and synchronized.")
     return redirect("/"+chantURLprefix+"/"+hcode+"/")
 
 def proposal(request, hcode, submitter):
@@ -306,7 +314,14 @@ def select(request, hcode, submitter):
     f.an_status = "SELECTED"
     f.save()
   commitmsg = "{} selected {}'s proposal for {}".format(request.user.username, submitter, hcode)
-  p.select(commitmsg=shlex.quote(commitmsg)) # this makes p copy its file hcode_submitter.gabc into hcode.gabc and commit that change
+  try:
+    p.select(commitmsg=commitmsg) # this makes p copy its file hcode_submitter.gabc into hcode.gabc and commit that change
+  except CalledProcessError:
+    messages.error(request, "Error during Git synchronization.")
+  except ValueError:
+    messages.info(request, "No change to synchronize.")
+  else:
+    messages.success(request, "Proposal selected and synchronized.")
   return redirect("/"+chantURLprefix+"/"+hcode)
 
 def comment_delete(request, id):

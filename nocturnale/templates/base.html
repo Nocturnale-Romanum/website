@@ -35,6 +35,14 @@
 
     <body class="{% block body_class %}{% endblock %}">
 
+{% if messages %}
+  {% for message in messages %}
+      <div class="alert alert-dismissible {{ message.tags }}" role="alert">
+        <div>{{ message | safe }}</div>
+      </div>
+  {% endfor %}
+{% endif %}
+
       <div class="container">
         <header
 		class="d-flex flex-wrap align-items-end justify-content-center justify-content-md-between py-3 mb-4 border-bottom"
