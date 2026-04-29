@@ -51,9 +51,13 @@ class ProposalEditForm(forms.Form):
     ('fake', "Synthetic/Contrafactum"),
   ], required=False)
   gabc = forms.CharField(label='GABC code without headers', widget=forms.Textarea(attrs={'rows':18}) )
-  source = forms.ChoiceField(choices = [('','')] + [ (source.siglum, source.siglum) for source in Source.objects.all().order_by('siglum') ], required=False)
+  source = forms.ChoiceField(required=False)
   sourcepage = forms.CharField(label='Source page', required=False)
   comment = forms.CharField(label='Summary of changes', required=True)
+
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self.fields["source"].choices = [('', '')] + [ (s.siglum, s.siglum) for s in Source.objects.order_by("siglum") ]
 
 class CommentForm(forms.Form):
   comment = forms.CharField(label='Add comment:', widget=forms.Textarea(attrs={'rows':8}), required=True)
@@ -113,7 +117,10 @@ class GABCSearchForm(forms.Form):
   search_scope = forms.ChoiceField(widget=forms.RadioSelect, choices=scope_choices)
   search_mode = forms.ChoiceField(label="Search only pieces of this mode:", choices = [('all', "all")] + mode_list)
   search_officepart = forms.ChoiceField(label="Search only pieces of this type:", choices = [('all', "all"), ('re', "Resp."), ('an', "Ant."), ('in', "Inv."), ('hy', "Hy."), ('ps', "Ps."), ('or', "Toni")])
-  search_contributors = forms.ChoiceField(label="", widget=forms.SelectMultiple, choices=[(u.id, u.username) for u in User.objects.all() if u.proposals.all()], required=False)
+  search_contributors = forms.ChoiceField(label="", widget=forms.SelectMultiple, required=False)
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self.fields["search_contributors"].choices = [(u.id, u.username) for u in User.objects.all() if u.proposals.all()]
 
 class TextSearchForm(forms.Form):
   search_text = forms.CharField(label="Text to be searched", required=True)
