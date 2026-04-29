@@ -20,7 +20,9 @@
     <div class="col-2">
       <div class="row"><button type="submit" class="btn btn-success">Test</button></div>
       <hr/>
-      <div class="row"><button type="reset" class="btn btn-warning">Clear</button></div>
+      <div class="row"><button type="reset" class="btn btn-info">Undo Changes</button></div>
+      <hr/>
+      <div class="row"><button type="button" class="btn btn-warning" onclick="document.getElementById('{{ form.gabc.id_for_label }}').value=''">Clear GABC</button></div>
     </div>
   </div>
 </form>
