@@ -3,6 +3,7 @@ from .views import *
 
 from django.http import HttpRequest
 from collections import deque
+from time import sleep
 
 def notif_context_processor(request):
   if not request.user.is_authenticated:
@@ -648,3 +649,14 @@ def check_oriscus(gabc):
       if prev_note != cur_note:
         return True
   return False
+
+def gabc_replace(old_string, new_string, username):
+  """Replaces all instances of old_string by new_string in username's proposals. Dumb, ought to be coupled to the gabc search function."""
+  pp = Proposal.objects.filter(submitter__username=username)
+  pp = [p for p in pp if old_string in p.gabc_mode_diff()[0]]
+  for p in pp:
+    gabc, mode, diff = p.gabc_mode_diff()
+    gabc = gabc.replace(old_string, new_string)
+    p.update(gabc, mode, diff, f"Replaced {old_string} with {new_string} via CLI")
+    sleep(20)
+
