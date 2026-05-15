@@ -67,7 +67,7 @@
         <a href="https://scrib.io/#q={{ gabc_code }}" target="_blank"><button type="button" class="btn btn-outline-primary me-2">Open in scrib.io</button></a><br><br>
       </div>
     <div>
-    <img src="{{ imglink }}" class="img-fluid" alt="image build failed or ongoing">
+    <img src="{{ imglink }}?cachebreaker={{ proposal.updated_at|date:'U' }}" class="img-fluid" alt="image build failed or ongoing">
 
   {% if comments %}
 

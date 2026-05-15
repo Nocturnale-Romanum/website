@@ -30,7 +30,9 @@ Submitted by : {{ selected.proposal.submitter }}
 
 <div class="row">
   <div class="col-md-6 offset-md-1">
-    <img src="{{ selected.link }}" class="img-fluid" alt="image build failed or ongoing">
+    <img 
+    {% if request.user.is_authenticated and selected.proposal and selected.proposal.submitter == request.user %} id="userimage"{% endif %}
+    src="{{ selected.link }}?cachebreaker={{ selected.proposal.updated_at|date:'U' }}" class="img-fluid" alt="image build failed or ongoing">
   </div>
   <div class="col-md-4">
   {% if request.user.is_authenticated and request.user != selected.proposal.submitter %}
@@ -114,7 +116,7 @@ Submitted by : {{ selected.proposal.submitter }}
 
 <div class="row">
   <div class="col-md-6 offset-md-1">
-    <img src="{{ userproposal.link }}" class="img-fluid" alt="image build failed or ongoing">
+    <img id="userimage" src="{{ userproposal.link }}?cachebreaker={{ userproposal.proposal.updated_at|date:'U' }}" class="img-fluid" alt="image build failed or ongoing">
   </div>
   <div class="col-md-4">
     <a href="/edit_proposal/{{ chant.code }}/"><button type="button" class="btn btn-outline-primary me-2">Edit my proposal</button></a>
@@ -199,7 +201,7 @@ Submitted by : {{ selected.proposal.submitter }}
 
 <div class="row">
   <div class="col-md-6 offset-md-1">
-    <img src="{{ data.link }}" class="img-fluid" alt="image build failed or ongoing"><br><br>
+    <img src="{{ data.link }}?cachebreaker={{ data.proposal.updated_at|date:'U' }}" class="img-fluid" alt="image build failed or ongoing"><br><br>
   </div>
   <div class="col-md-4">
   {% if request.user.is_authenticated %}
@@ -263,4 +265,33 @@ Submitted by : {{ selected.proposal.submitter }}
 <div class="row"><div class="col-md-8 offset-md-2">
 {% endfor %}
 
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const img = document.getElementById("userimage");
+    if (!img) {
+        console.log("Image à surveiller introuvable");
+        return;
+    }
+
+    const watchUrl = img.src;  // URL EXACTE à surveiller
+
+    function check() {
+        fetch(watchUrl, { method: "HEAD" })
+            .then(response => {
+                if (response.ok) {
+                    // L'image existe enfin → on la recharge une seule fois
+                    img.src = watchUrl;
+                    console.log("Image prête, arrêt du polling");
+                } else {
+                    setTimeout(check, 2000);
+                }
+            })
+            .catch(() => {
+                setTimeout(check, 2000);
+            });
+    }
+
+    check();
+});
+</script>
 {% endblock content %}

@@ -8,6 +8,7 @@ from pathlib import Path
 from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
+from django.utils import timezone
 
 from wagtail.models import Page
 from wagtail.fields import RichTextField
@@ -78,7 +79,15 @@ class Source(models.Model):
     def __str__(self):
       return self.siglum
 
-class Proposal(models.Model):
+class TimeStampedModel(models.Model):
+    """Abstract base class that adds created_at and updated_at fields to models."""
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    class Meta:
+        abstract = True
+        get_latest_by = "updated_at"
+
+class Proposal(TimeStampedModel):
     """This class represents a bit of GABC code and associated metadata,
     submitted by a user as restitution of a given chant."""
     chant = models.ForeignKey("Chant", related_name="proposals", null=False, on_delete=models.CASCADE)
@@ -144,6 +153,8 @@ class Proposal(models.Model):
       else:
         raise ValueError("git status empty")
     def makepng(self):
+      self.updated_at = timezone.now()
+      self.save(update_fields=["updated_at"])
       os.system("./tex_build/build.py "+os.path.join(gabcFolder, self.filename())+" "+pngFolder+" &")
     def sourceurl(self):
       if (self.source and self.source.urlpattern):
@@ -156,6 +167,7 @@ class Proposal(models.Model):
       return urllib.parse.quote(self.gabc_mode_diff()[0])
     def update(self, gabc=None, mode=None, differentia=None, commitmsg=None):
       """General-purpose method for updating an existing proposal. Called with all params upon creation, may be called with less params, in which case current params from the proposal file will be reused."""
+      os.remove(self.imgpath())
       (old_gabc, old_mode, old_diff) = self.gabc_mode_diff()
       if not gabc:
         gabc = old_gabc
@@ -193,7 +205,7 @@ class Proposal(models.Model):
       else:
         raise ValueError("git status empty")
 
-class Chant(models.Model):
+class Chant(TimeStampedModel):
     """This class represents a chant entry, that is, a specific sung part of a given day's Matins.
     A number of proposals are associated with a given Chant entry, one of which may be 'selected' (for insertion in the GABC reference files)."""
     selected_proposal = models.ForeignKey("Proposal", null=True, on_delete=models.SET_NULL, related_name="chant_where_this_is_selected")
@@ -212,7 +224,7 @@ class Chant(models.Model):
     def __str__(self):
       return self.code
 
-class RelatedChantsClass(models.Model):
+class RelatedChantsClass(TimeStampedModel):
     """This class has no fields, its only role is to point back to the list of chants that point to a given instance of this class,
     in order to easily access duplicates of a given chant."""
     pass
@@ -220,7 +232,7 @@ class RelatedChantsClass(models.Model):
 def get_table_upload_path(table, filename):
   return 'tables/'+table.chant.code+'__'+''.join(x for x in filename if x.isalpha() or x == "_" or x == ".")
 
-class Table(models.Model):
+class Table(TimeStampedModel):
     """This class represents a comparative table associated to a particular chant."""
     chant = models.ForeignKey("Chant", null=False, on_delete=models.PROTECT, related_name="tables")
     tablefile = models.FileField(upload_to=get_table_upload_path)
@@ -259,7 +271,7 @@ class Feast(models.Model):
     def __str__(self):
       return self.code
 
-class Comment(models.Model):
+class Comment(TimeStampedModel):
     """A basic Comment model"""
     author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="comments", null=False, on_delete=models.PROTECT)
     date = models.DateTimeField(default=datetime.now)
