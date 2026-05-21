@@ -20,10 +20,20 @@
         </div>
 </form>
         <div class="col-6">
-          <h4>Result</h4>
+          <div class="row"><div class="col-8"><h4>Result</h4></div><div class="col-4 text-end"><button type="button" class="btn btn-sm btn-primary mt-2" onclick="copyResult()">Copy</button></div></div>
 
-          {{ answer }}
+            <pre id="gabc-result" class="p-2 border rounded bg-light" style="white-space: pre-wrap; word-wrap: break-word;">{{ answer }}</pre>
+
         </div>
       </div>
 </div>
+
+<script>
+function copyResult() {
+  const text = document.getElementById("gabc-result").innerText;
+  navigator.clipboard.writeText(text).then(() => {
+  });
+}
+</script>
+
 {% endblock content %}
