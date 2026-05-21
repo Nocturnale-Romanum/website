@@ -454,7 +454,13 @@ def gabcsearch(request):
     search_mode = request.POST.get('search_mode')
     search_officepart = request.POST.get('search_officepart')
     search_contributors = [int(x) for x in request.POST.getlist('search_contributors')]
-    form = GABCSearchForm(initial = {'search_text':search_text, 'search_scope':search_scope, 'search_contributors':search_contributors, 'search_mode':search_mode})
+    form = GABCSearchForm(initial = {
+      'search_text':search_text,
+      'search_scope':search_scope,
+      'search_contributors':search_contributors,
+      'search_mode':search_mode,
+      'search_officepart':search_officepart,
+    })
     if search_scope == 'u':
       contributor_list = [request.user]
     elif search_scope == 's':
