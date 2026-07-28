@@ -268,12 +268,6 @@ def proposal(request, hcode, submitter):
       text = request.POST.get("comment")
       c = Comment(proposal = p, text = text, author = request.user)
       c.save()
-      ### we create notifications for all users who have previously commented on this proposal
-      notified_users = set([c.author for c in p.comments.all()])
-      notified_users.remove(request.user)
-      for u in notified_users:
-        n = Notification(user = u, comment = c)
-        n.save()
     return redirect("/"+proposalURLprefix+"/"+hcode+"/"+submitter+"/")
 
 def comment_edit(request, id):

@@ -282,6 +282,14 @@ class Comment(TimeStampedModel):
     proposal = models.ForeignKey("Proposal", related_name="comments", null=False, on_delete=models.CASCADE)
     def __str__(self):
       return self.author.username + " on " + str(self.proposal)
+    def save(self, **kwargs):
+      super().save(**kwargs)
+      ### we create notifications for all users who have previously commented on the proposal on which we are commenting, except the author
+      notified_users = set([c.author for c in self.proposal.comments.all()])
+      notified_users.remove(self.author)
+      for u in notified_users:
+        n = Notification(user = u, comment = self)
+        n.save()
 
 class Notification(models.Model):
     """The notification a user receives when someone comments their proposal or replies to them"""
