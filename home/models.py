@@ -167,7 +167,10 @@ class Proposal(TimeStampedModel):
       return urllib.parse.quote(self.gabc_mode_diff()[0])
     def update(self, gabc=None, mode=None, differentia=None, commitmsg=None):
       """General-purpose method for updating an existing proposal. Called with all params upon creation, may be called with less params, in which case current params from the proposal file will be reused."""
-      os.remove(self.imgpath())
+      try:
+        os.remove(self.imgpath())
+      except Exception:
+        pass
       (old_gabc, old_mode, old_diff) = self.gabc_mode_diff()
       if not gabc:
         gabc = old_gabc
