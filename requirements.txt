@@ -9,3 +9,4 @@ puput
 colorful
 crispy_bootstrap4
 mysql-connector
+mysql
