@@ -40,7 +40,9 @@ urlpatterns = [
     path('select/<slug:hcode>/<slug:submitter>/', home_views.select),
     path('comment/<int:id>/delete/', home_views.comment_delete),
     path('comment/<int:id>/edit/', home_views.comment_edit),
+
     path('robots.txt', TemplateView.as_view(template_name="robots.txt", content_type="text/plain") ),
+    path("api/github/", home_views.github_webhook, name="github_webhook"),
 ]
 
 

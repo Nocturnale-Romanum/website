@@ -5,6 +5,30 @@ from django.http import HttpRequest
 from collections import deque
 from time import sleep
 
+import hmac
+import hashlib
+
+from django.conf import settings
+from django.http import HttpResponseForbidden
+
+
+def verify_github_signature(request):
+    """
+    To be used at the beginning of all views that are csrf exempt and process github webhooks. Checks that the secret carried by the github hook is correct.
+    """
+    signature = request.headers.get("X-Hub-Signature-256")
+
+    if not signature:
+        return False
+
+    expected = "sha256=" + hmac.new(
+        settings.GITHUB_WEBHOOK_SECRET.encode(),
+        request.body,
+        hashlib.sha256,
+    ).hexdigest()
+
+    return hmac.compare_digest(signature, expected)
+
 def notif_context_processor(request):
   if not request.user.is_authenticated:
     return {'user_notifications':0}

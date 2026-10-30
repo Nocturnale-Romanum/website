@@ -6,11 +6,14 @@ import os
 from time import time
 import re
 from subprocess import CalledProcessError
+import json
 
 from django.contrib import messages
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
+
 from django.template import loader
 from django.shortcuts import get_object_or_404, redirect
+from django.views.decorators.csrf import csrf_exempt # pour les API avec secret symétrique
 
 # we define some URL prefixes here in case they change down the line
 feastURLprefix = "feast"
@@ -542,3 +545,68 @@ def gabccompiletest(request):
   }
   return HttpResponse(template.render(context, request))
 
+
+@csrf_exempt
+def github_webhook(request):
+  """
+  Currently: rebuilds a score when a PR containing this score is merged, and adds a link to this PR in the proposal's comments.
+  In the future we might do better Github hooks.
+  """
+  if request.method != "POST":
+    return HttpResponseForbidden()
+  if not verify_github_signature(request):
+    return HttpResponseForbidden("Invalid signature")
+  event = request.headers.get("X-GitHub-Event")
+  # we process pings (for testing) and pull requests.
+  if event == "ping":
+    return HttpResponse("OK")
+  if event != "pull_request":
+    return HttpResponse("ignored")
+  payload = json.loads(request.body)
+  # if the PR is not merged and closed, we ignore it: we act on closed and merged PRs.
+  if payload.get("action") != "closed":
+    return HttpResponse("Ignored")
+  pull_request = payload.get("pull_request")
+  if not pull_request.get("merged"):
+    return HttpResponse("Ignored")
+  pr_url = pull_request["html_url"]
+  # attempt to update local git repo
+  try:
+    run_git("fetch")
+    run_git("rebase", "origin/main")
+  except Exception as e:
+    return HttpResponse(f"Git synchronization failed: {e}", status=500)
+  # we identify the Proposal object related to the PR
+  merge_commit_sha = pull_request["merge_commit_sha"]
+  changed_files = [
+    f.strip()
+    for f in git_stdout(
+      "diff-tree",
+      "--no-commit-id",
+      "--name-only",
+      "-r",
+      merge_commit_sha,
+    ).splitlines()
+    if f.strip()
+  ]
+  if len(changed_files) != 1:
+    raise ValueError(
+      "Expected exactly one modified file, got {}".format(len(changed_files))
+    )
+  filename = os.path.basename(changed_files[0])
+  if not filename.endswith(".gabc"):
+    raise ValueError(
+      "Unexpected modified file '{}'".format(filename)
+    )
+  chant_code, username = filename[:-5].split("_", 1)
+  proposal = Proposal.objects.get(chant__code=chant_code, submitter__username=username)
+  # we update the PNG
+  proposal.makepng()
+  # we add a comment
+  github_user = User.objects.get(username="github")
+  Comment.objects.create(
+    proposal=proposal,
+    author=github_user,
+    text="cf. pull request: {}".format(pr_url),
+  )
+  return HttpResponse("OK")

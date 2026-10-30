@@ -25,6 +25,7 @@ def run_git(*args):
     """
     Runs a git command in nocturnale/static, somewhat safely.
     Raises an exception if the command fails.
+    Ignores stdout
     """
     try:
       subprocess.run(
@@ -51,6 +52,19 @@ def git_has_changes():
         text=True
     )
     return result.stdout.strip() != ""
+
+def git_stdout(*args):
+    """
+    Runs a git command and captures the output, and return it.
+    """
+    result = subprocess.run(
+        ["git", *args],
+        cwd=GIT_WORKDIR,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return result.stdout
 
 class HomePage(Page):
     """Somewhat generic page model.
