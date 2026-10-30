@@ -12,6 +12,7 @@ nocturnale/settings/production.py
 nocturnale/static/pngs/*
 nocturnale/static/gabc/*
 nocturnale/static/psalmi/*
+nocturnale/static/guidelines/*
 nocturnale/static/*.tex
 nocturnale/static/.git
 nocturnale/static/.gitignore
