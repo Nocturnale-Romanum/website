@@ -276,7 +276,7 @@ def proposal(request, hcode, submitter):
 def comment_edit(request, id):
   comment = get_object_or_404(Comment, id=id)
   redirect_url = "/"+proposalURLprefix+"/"+comment.proposal.chant.code+"/"+comment.proposal.submitter.username+"/"
-  if not request.user == comment.author:
+  if not (request.user == comment.author or request.user.is_staff):
     return redirect(redirect_url)
   if request.method == "GET":
     template = loader.get_template('home/comment_edit.html')
