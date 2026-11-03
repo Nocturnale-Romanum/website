@@ -106,6 +106,8 @@ CSRF_TRUSTED_ORIGINS = ['https://nocturnale.marteo.fr']
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
+        'HOST': '127.0.0.1',
+        'PORT': '3306', # this line and the HOST line force use of TCP instead of a Unix socket that caused issues. marteo 03/11/2026
         'CONN_MAX_AGE': 3600,
         'OPTIONS': {
              'read_default_file': 'nocturnale/settings/mysql.conf',
