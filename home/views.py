@@ -576,37 +576,35 @@ def github_webhook(request):
     run_git("rebase", "origin/main")
   except Exception as e:
     return HttpResponse(f"Git synchronization failed: {e}", status=500)
-  # we identify the Proposal object related to the PR
-  merge_commit_sha = pull_request["merge_commit_sha"]
-  changed_files = [
-    f.strip()
-    for f in git_stdout(
-      "diff-tree",
-      "--no-commit-id",
-      "--name-only",
-      "-r",
-      merge_commit_sha,
-    ).splitlines()
-    if f.strip()
-  ]
-  if len(changed_files) != 1:
-    raise ValueError(
-      "Expected exactly one modified file, got {}".format(len(changed_files))
-    )
-  filename = os.path.basename(changed_files[0])
-  if not filename.endswith(".gabc"):
-    raise ValueError(
-      "Unexpected modified file '{}'".format(filename)
-    )
-  chant_code, username = filename[:-5].split("_", 1)
-  proposal = Proposal.objects.get(chant__code=chant_code, submitter__username=username)
-  # we update the PNG
-  proposal.makepng()
-  # we add a comment
+  # we list the files of the PR through the GitHub API: with a rebase merge, merge_commit_sha
+  # is only the last commit of the PR, so a diff-tree on it can miss files.
+  try:
+    pr_files = github_pr_files(pull_request["url"])
+  except Exception as e:
+    return HttpResponse(f"Could not list the files of the PR: {e}", status=500)
+  # we identify the Proposal objects related to the PR
+  proposals = []
+  skipped = []
+  for pr_file in pr_files:
+    path = pr_file["filename"]
+    filename = os.path.basename(path)
+    if pr_file.get("status") == "removed" or not filename.endswith(".gabc") or "_" not in filename:
+      skipped.append(path)
+      continue
+    chant_code, username = filename[:-5].split("_", 1)
+    try:
+      proposals.append(Proposal.objects.get(chant__code=chant_code, submitter__username=username))
+    except Proposal.DoesNotExist:
+      skipped.append(path)
   github_user = User.objects.get(username="github")
-  Comment.objects.create(
-    proposal=proposal,
-    author=github_user,
-    text="cf. pull request: {}".format(pr_url),
-  )
-  return HttpResponse("OK")
+  for proposal in proposals:
+    # we update the PNG
+    proposal.makepng()
+    # we add a comment
+    Comment.objects.create(
+      proposal=proposal,
+      author=github_user,
+      text="cf. pull request: {}".format(pr_url),
+    )
+  return HttpResponse("OK: {} proposal(s) updated, skipped files: {}".format(
+    len(proposals), ", ".join(skipped) or "none"))

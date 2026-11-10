@@ -7,6 +7,8 @@ from time import sleep
 
 import hmac
 import hashlib
+import json
+import urllib.request
 
 from django.conf import settings
 from django.http import HttpResponseForbidden
@@ -28,6 +30,25 @@ def verify_github_signature(request):
     ).hexdigest()
 
     return hmac.compare_digest(signature, expected)
+
+def github_pr_files(pr_api_url):
+    """
+    Returns the list of files of a pull request, as given by the GitHub API (dicts with 'filename', 'status'...).
+    pr_api_url is the "url" field of the pull_request object of a webhook payload. The API is paginated (100 files max per page).
+    """
+    files = []
+    page = 1
+    while True:
+        req = urllib.request.Request(
+            "{}/files?per_page=100&page={}".format(pr_api_url, page),
+            headers={"Accept": "application/vnd.github+json", "User-Agent": "nocturnale-romanum-website"},
+        )
+        with urllib.request.urlopen(req, timeout=30) as response:
+            batch = json.loads(response.read().decode())
+        files.extend(batch)
+        if len(batch) < 100:
+            return files
+        page += 1
 
 def notif_context_processor(request):
   if not request.user.is_authenticated:
